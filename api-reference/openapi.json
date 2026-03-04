@@ -15,7 +15,7 @@
       "get": {
         "summary": "Markets",
         "operationId": "getFundingMarkets",
-        "description": "Funding market snapshot with normalized APR fields.",
+        "description": "Funding market snapshot with normalized APR fields. All `funding_rate*` fields are APR values in percent.",
         "parameters": [
           {
             "name": "market_id",
@@ -242,44 +242,68 @@
             ],
             "additionalProperties": true
           }
-        },
-        "required": [
-          "code",
-          "message"
-        ]
+        }
       },
       "MarketRow": {
         "type": "object",
+        "description": "Market snapshot row. All `funding_rate*` fields are APR values in percent.",
         "properties": {
           "market_id": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "exchange": {
             "type": "string"
           },
           "open_interest": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "volume_24h": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "funding_rate_live": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "funding_rate_1d": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "funding_rate_3d": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "funding_rate_7d": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "funding_rate_15d": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "funding_rate_30d": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "base_asset": {
             "type": "string"
@@ -287,21 +311,7 @@
           "quote_asset": {
             "type": "string"
           }
-        },
-        "required": [
-          "market_id",
-          "exchange",
-          "open_interest",
-          "volume_24h",
-          "funding_rate_live",
-          "funding_rate_1d",
-          "funding_rate_3d",
-          "funding_rate_7d",
-          "funding_rate_15d",
-          "funding_rate_30d",
-          "base_asset",
-          "quote_asset"
-        ]
+        }
       },
       "ArbitrageRow": {
         "type": "object",
@@ -313,10 +323,16 @@
             "type": "number"
           },
           "stability": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "coverage": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "long_market_id": {
             "type": "integer"
@@ -324,15 +340,7 @@
           "short_market_id": {
             "type": "integer"
           }
-        },
-        "required": [
-          "base_asset",
-          "apr_15d",
-          "stability",
-          "coverage",
-          "long_market_id",
-          "short_market_id"
-        ]
+        }
       },
       "HistoryPoint": {
         "type": "object",
@@ -344,11 +352,7 @@
           "apr": {
             "type": "number"
           }
-        },
-        "required": [
-          "funding_time",
-          "apr"
-        ]
+        }
       },
       "MarketsEnvelope": {
         "type": "object",
@@ -362,17 +366,18 @@
                   "$ref": "#/components/schemas/MarketRow"
                 }
               }
-            },
-            "required": ["rows"]
+            }
           },
           "meta": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "error": {
             "type": "null"
           }
-        },
-        "required": ["data", "meta", "error"]
+        }
       },
       "ArbitrageEnvelope": {
         "type": "object",
@@ -386,17 +391,18 @@
                   "$ref": "#/components/schemas/ArbitrageRow"
                 }
               }
-            },
-            "required": ["rows"]
+            }
           },
           "meta": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "error": {
             "type": "null"
           }
-        },
-        "required": ["data", "meta", "error"]
+        }
       },
       "HistoryEnvelope": {
         "type": "object",
@@ -410,8 +416,7 @@
                   "$ref": "#/components/schemas/HistoryPoint"
                 }
               }
-            },
-            "required": ["rows"]
+            }
           },
           "meta": {
             "type": "object",
@@ -420,16 +425,17 @@
                 "type": "integer"
               },
               "funding_period_hours": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               }
-            },
-            "required": ["days", "funding_period_hours"]
+            }
           },
           "error": {
             "type": "null"
           }
-        },
-        "required": ["data", "meta", "error"]
+        }
       },
       "ErrorEnvelope": {
         "type": "object",
@@ -438,13 +444,15 @@
             "type": "null"
           },
           "meta": {
-            "type": ["object", "null"]
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "error": {
             "$ref": "#/components/schemas/ApiError"
           }
-        },
-        "required": ["data", "meta", "error"]
+        }
       }
     },
     "responses": {

@@ -12,33 +12,3 @@ All public endpoints are available under `/api/public/v1/...`.
 ## Authentication
 
 Public funding endpoints do not require authentication.
-
-## Response envelope
-
-All endpoints use this top-level shape:
-
-```json
-{
-  "data": {},
-  "meta": null,
-  "error": null
-}
-```
-
-## Error format
-
-```json
-{
-  "data": null,
-  "meta": null,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid request",
-    "details": null
-  }
-}
-```
-
-## Versioning
-
-Responses include `X-API-Version: v1`.

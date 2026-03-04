@@ -38,7 +38,9 @@
           {
             "group": "Overview",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/introduction",
+              "api-reference/rate-limits",
+              "api-reference/commercial-use"
             ]
           },
           {
@@ -51,16 +53,7 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Main Site",
-          "href": "https://bendbasis.com/funding",
-          "icon": "globe"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/light.svg",
