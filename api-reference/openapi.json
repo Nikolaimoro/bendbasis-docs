@@ -15,26 +15,17 @@
       "get": {
         "summary": "Markets",
         "operationId": "getFundingMarkets",
-        "description": "Funding market snapshot with normalized APR fields. All `funding_rate*` fields are APR values in percent.",
+        "description": "Funding market snapshot. All `funding_rate*` fields are APR values in percent.",
         "parameters": [
-          {
-            "name": "market_id",
-            "in": "query",
-            "required": false,
-            "description": "Filter by one market ID.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
           {
             "name": "market_ids",
             "in": "query",
             "required": false,
-            "description": "Filter by multiple market IDs. Supports CSV (`1,2,3`) or repeated query params.",
+            "description": "Optional market ID filter. Supports CSV (`1,2,3`) and repeated query params (`?market_ids=1&market_ids=2`).",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "1,2,3"
           }
         ],
         "responses": {
@@ -57,38 +48,43 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MarketsEnvelope"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MarketRow"
+                  }
                 },
-                "example": {
-                  "data": {
-                    "rows": [
-                      {
-                        "market_id": 1,
-                        "exchange": "bybit",
-                        "open_interest": 5526243.12,
-                        "volume_24h": 3172244.1706,
-                        "funding_rate_live": 10.95,
-                        "funding_rate_1d": -9.57,
-                        "funding_rate_3d": -20.69,
-                        "funding_rate_7d": -9.02,
-                        "funding_rate_15d": -97.83,
-                        "funding_rate_30d": -214.92,
-                        "base_asset": "0G",
-                        "quote_asset": "USDT"
-                      }
-                    ]
+                "example": [
+                  {
+                    "market_id": 1,
+                    "exchange": "bybit",
+                    "base_asset": "0G",
+                    "quote_asset": "USDT",
+                    "open_interest": 5279289.65,
+                    "volume_24h": 2881100.8681,
+                    "funding_rate_live": -31.91,
+                    "funding_rate_1d": 2.95,
+                    "funding_rate_3d": -23.35,
+                    "funding_rate_7d": -9.4,
+                    "funding_rate_15d": -94.63,
+                    "funding_rate_30d": -212.71
                   },
-                  "meta": null,
-                  "error": null
-                }
+                  {
+                    "market_id": 2,
+                    "exchange": "bybit",
+                    "base_asset": "BABYDOGE",
+                    "quote_asset": "USDT",
+                    "open_interest": 471050.14,
+                    "volume_24h": 288038.1897,
+                    "funding_rate_live": 10.95,
+                    "funding_rate_1d": 10.95,
+                    "funding_rate_3d": 10.95,
+                    "funding_rate_7d": 10.95,
+                    "funding_rate_15d": 10.55,
+                    "funding_rate_30d": 10.75
+                  }
+                ]
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalError"
           }
         }
       }
@@ -98,6 +94,18 @@
         "summary": "Arbitrage opportunities",
         "operationId": "getFundingArbitrage",
         "description": "Arbitrage opportunities with normalized public fields.",
+        "parameters": [
+          {
+            "name": "base_assets",
+            "in": "query",
+            "required": false,
+            "description": "Optional base asset filter. Supports CSV (`BTC,ETH`) and repeated query params (`?base_assets=BTC&base_assets=ETH`).",
+            "schema": {
+              "type": "string"
+            },
+            "example": "BTC,ETH"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Arbitrage response",
@@ -112,35 +120,35 @@
                 "schema": {
                   "type": "string"
                 },
-                "example": "public, max-age=0, s-maxage=300, stale-while-revalidate=60"
+                "example": "public, max-age=0, s-maxage=3600, stale-while-revalidate=300"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ArbitrageEnvelope"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ArbitrageRow"
+                  }
                 },
-                "example": {
-                  "data": {
-                    "rows": [
-                      {
-                        "base_asset": "XCU",
-                        "apr_15d": 63.87,
-                        "stability": 1,
-                        "coverage": 1,
-                        "long_market_id": 2396751,
-                        "short_market_id": 2295154
-                      }
-                    ]
+                "example": [
+                  {
+                    "base_asset": "XCU",
+                    "apr_15d": 74.64,
+                    "stability": 1,
+                    "long_market_id": 2396751,
+                    "short_market_id": 2295154
                   },
-                  "meta": null,
-                  "error": null
-                }
+                  {
+                    "base_asset": "FIL",
+                    "apr_15d": 49.95,
+                    "stability": 0.987461,
+                    "long_market_id": 9422404,
+                    "short_market_id": 268893
+                  }
+                ]
               }
             }
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalError"
           }
         }
       }
@@ -194,31 +202,23 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HistoryEnvelope"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HistoryRow"
+                  }
                 },
-                "example": {
-                  "data": {
-                    "rows": [
-                      {
-                        "funding_time": "2026-03-04T08:00:00Z",
-                        "apr": 12.34
-                      }
-                    ]
+                "example": [
+                  {
+                    "funding_time": "2026-03-04T12:00:00+00:00",
+                    "apr": 10.95
                   },
-                  "meta": {
-                    "days": 30,
-                    "funding_period_hours": 8
-                  },
-                  "error": null
-                }
+                  {
+                    "funding_time": "2026-03-04T08:00:00+00:00",
+                    "apr": 3.09
+                  }
+                ]
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalError"
           }
         }
       }
@@ -226,24 +226,6 @@
   },
   "components": {
     "schemas": {
-      "ApiError": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          },
-          "details": {
-            "type": [
-              "object",
-              "null"
-            ],
-            "additionalProperties": true
-          }
-        }
-      },
       "MarketRow": {
         "type": "object",
         "description": "Market snapshot row. All `funding_rate*` fields are APR values in percent.",
@@ -252,64 +234,76 @@
             "type": [
               "integer",
               "null"
-            ]
+            ],
+            "description": "Market identifier."
           },
           "exchange": {
-            "type": "string"
+            "type": "string",
+            "description": "Exchange name."
+          },
+          "base_asset": {
+            "type": "string",
+            "description": "Base asset ticker."
+          },
+          "quote_asset": {
+            "type": "string",
+            "description": "Quote asset ticker."
           },
           "open_interest": {
             "type": [
               "number",
               "null"
-            ]
+            ],
+            "description": "Open interest in quote currency units."
           },
           "volume_24h": {
             "type": [
               "number",
               "null"
-            ]
+            ],
+            "description": "24-hour traded volume in quote currency units."
           },
           "funding_rate_live": {
             "type": [
               "number",
               "null"
-            ]
+            ],
+            "description": "Current funding rate APR in percent."
           },
           "funding_rate_1d": {
             "type": [
               "number",
               "null"
-            ]
+            ],
+            "description": "1-day funding rate APR in percent."
           },
           "funding_rate_3d": {
             "type": [
               "number",
               "null"
-            ]
+            ],
+            "description": "3-day funding rate APR in percent."
           },
           "funding_rate_7d": {
             "type": [
               "number",
               "null"
-            ]
+            ],
+            "description": "7-day funding rate APR in percent."
           },
           "funding_rate_15d": {
             "type": [
               "number",
               "null"
-            ]
+            ],
+            "description": "15-day funding rate APR in percent."
           },
           "funding_rate_30d": {
             "type": [
               "number",
               "null"
-            ]
-          },
-          "base_asset": {
-            "type": "string"
-          },
-          "quote_asset": {
-            "type": "string"
+            ],
+            "description": "30-day funding rate APR in percent."
           }
         }
       },
@@ -328,12 +322,6 @@
               "null"
             ]
           },
-          "coverage": {
-            "type": [
-              "number",
-              "null"
-            ]
-          },
           "long_market_id": {
             "type": "integer"
           },
@@ -342,7 +330,7 @@
           }
         }
       },
-      "HistoryPoint": {
+      "HistoryRow": {
         "type": "object",
         "properties": {
           "funding_time": {
@@ -351,146 +339,6 @@
           },
           "apr": {
             "type": "number"
-          }
-        }
-      },
-      "MarketsEnvelope": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "rows": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/MarketRow"
-                }
-              }
-            }
-          },
-          "meta": {
-            "type": [
-              "object",
-              "null"
-            ]
-          },
-          "error": {
-            "type": "null"
-          }
-        }
-      },
-      "ArbitrageEnvelope": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "rows": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ArbitrageRow"
-                }
-              }
-            }
-          },
-          "meta": {
-            "type": [
-              "object",
-              "null"
-            ]
-          },
-          "error": {
-            "type": "null"
-          }
-        }
-      },
-      "HistoryEnvelope": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "rows": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/HistoryPoint"
-                }
-              }
-            }
-          },
-          "meta": {
-            "type": "object",
-            "properties": {
-              "days": {
-                "type": "integer"
-              },
-              "funding_period_hours": {
-                "type": [
-                  "integer",
-                  "null"
-                ]
-              }
-            }
-          },
-          "error": {
-            "type": "null"
-          }
-        }
-      },
-      "ErrorEnvelope": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "null"
-          },
-          "meta": {
-            "type": [
-              "object",
-              "null"
-            ]
-          },
-          "error": {
-            "$ref": "#/components/schemas/ApiError"
-          }
-        }
-      }
-    },
-    "responses": {
-      "ValidationError": {
-        "description": "Validation error",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ErrorEnvelope"
-            },
-            "example": {
-              "data": null,
-              "meta": null,
-              "error": {
-                "code": "VALIDATION_ERROR",
-                "message": "Invalid market_id/market_ids format",
-                "details": null
-              }
-            }
-          }
-        }
-      },
-      "InternalError": {
-        "description": "Internal server error",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ErrorEnvelope"
-            },
-            "example": {
-              "data": null,
-              "meta": null,
-              "error": {
-                "code": "INTERNAL_ERROR",
-                "message": "Internal server error",
-                "details": null
-              }
-            }
           }
         }
       }
