@@ -1,152 +1,224 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
+    "title": "bendbasis Public API",
+    "description": "Public funding endpoints for markets, arbitrage opportunities, and funding history.",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
+      "url": "https://bendbasis.com"
     }
   ],
   "paths": {
-    "/plants": {
+    "/api/public/v1/funding/markets": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "summary": "Markets",
+        "operationId": "getFundingMarkets",
+        "description": "Funding market snapshot with normalized APR fields.",
         "parameters": [
           {
-            "name": "limit",
+            "name": "market_id",
             "in": "query",
-            "description": "The maximum number of results to return",
+            "required": false,
+            "description": "Filter by one market ID.",
             "schema": {
               "type": "integer",
-              "format": "int32"
+              "minimum": 1
+            }
+          },
+          {
+            "name": "market_ids",
+            "in": "query",
+            "required": false,
+            "description": "Filter by multiple market IDs. Supports CSV (`1,2,3`) or repeated query params.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Markets response",
+            "headers": {
+              "X-API-Version": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "v1"
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "public, max-age=0, s-maxage=300, stale-while-revalidate=60"
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
+                  "$ref": "#/components/schemas/MarketsEnvelope"
+                },
+                "example": {
+                  "data": {
+                    "rows": [
+                      {
+                        "market_id": 1,
+                        "exchange": "bybit",
+                        "open_interest": 5526243.12,
+                        "volume_24h": 3172244.1706,
+                        "funding_rate_live": 10.95,
+                        "funding_rate_1d": -9.57,
+                        "funding_rate_3d": -20.69,
+                        "funding_rate_7d": -9.02,
+                        "funding_rate_15d": -97.83,
+                        "funding_rate_30d": -214.92,
+                        "base_asset": "0G",
+                        "quote_asset": "USDT"
+                      }
+                    ]
+                  },
+                  "meta": null,
+                  "error": null
                 }
               }
             }
           },
           "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
+            "$ref": "#/components/responses/ValidationError"
           },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+          "500": {
+            "$ref": "#/components/responses/InternalError"
           }
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/api/public/v1/funding/arbitrage": {
+      "get": {
+        "summary": "Arbitrage opportunities",
+        "operationId": "getFundingArbitrage",
+        "description": "Arbitrage opportunities with normalized public fields.",
+        "responses": {
+          "200": {
+            "description": "Arbitrage response",
+            "headers": {
+              "X-API-Version": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "v1"
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "public, max-age=0, s-maxage=300, stale-while-revalidate=60"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArbitrageEnvelope"
+                },
+                "example": {
+                  "data": {
+                    "rows": [
+                      {
+                        "base_asset": "XCU",
+                        "apr_15d": 63.87,
+                        "stability": 1,
+                        "coverage": 1,
+                        "long_market_id": 2396751,
+                        "short_market_id": 2295154
+                      }
+                    ]
+                  },
+                  "meta": null,
+                  "error": null
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/api/public/v1/funding/markets/{marketId}/history": {
+      "get": {
+        "summary": "Funding history",
+        "operationId": "getFundingHistory",
+        "description": "Historical funding values for one market.",
         "parameters": [
           {
-            "name": "id",
+            "name": "marketId",
             "in": "path",
-            "description": "ID of plant to delete",
             "required": true,
+            "description": "Target market ID.",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "minimum": 1
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "description": "History window size. Allowed range: 1..30. Default: 30.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 30,
+              "default": 30
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "Funding history response",
+            "headers": {
+              "X-API-Version": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "v1"
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "public, max-age=0, s-maxage=600, stale-while-revalidate=60"
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/HistoryEnvelope"
+                },
+                "example": {
+                  "data": {
+                    "rows": [
+                      {
+                        "funding_time": "2026-03-04T08:00:00Z",
+                        "apr": 12.34
+                      }
+                    ]
+                  },
+                  "meta": {
+                    "days": 30,
+                    "funding_period_hours": 8
+                  },
+                  "error": null
                 }
               }
             }
-          }
-        }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
           }
         }
       }
@@ -154,63 +226,265 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+      "ApiError": {
         "type": "object",
         "properties": {
-          "name": {
-            "description": "The name of the plant",
+          "code": {
             "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
           },
           "message": {
             "type": "string"
+          },
+          "details": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": true
           }
-        }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "MarketRow": {
+        "type": "object",
+        "properties": {
+          "market_id": {
+            "type": ["integer", "null"]
+          },
+          "exchange": {
+            "type": "string"
+          },
+          "open_interest": {
+            "type": ["number", "null"]
+          },
+          "volume_24h": {
+            "type": ["number", "null"]
+          },
+          "funding_rate_live": {
+            "type": ["number", "null"]
+          },
+          "funding_rate_1d": {
+            "type": ["number", "null"]
+          },
+          "funding_rate_3d": {
+            "type": ["number", "null"]
+          },
+          "funding_rate_7d": {
+            "type": ["number", "null"]
+          },
+          "funding_rate_15d": {
+            "type": ["number", "null"]
+          },
+          "funding_rate_30d": {
+            "type": ["number", "null"]
+          },
+          "base_asset": {
+            "type": "string"
+          },
+          "quote_asset": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "market_id",
+          "exchange",
+          "open_interest",
+          "volume_24h",
+          "funding_rate_live",
+          "funding_rate_1d",
+          "funding_rate_3d",
+          "funding_rate_7d",
+          "funding_rate_15d",
+          "funding_rate_30d",
+          "base_asset",
+          "quote_asset"
+        ]
+      },
+      "ArbitrageRow": {
+        "type": "object",
+        "properties": {
+          "base_asset": {
+            "type": "string"
+          },
+          "apr_15d": {
+            "type": "number"
+          },
+          "stability": {
+            "type": ["number", "null"]
+          },
+          "coverage": {
+            "type": ["number", "null"]
+          },
+          "long_market_id": {
+            "type": "integer"
+          },
+          "short_market_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "base_asset",
+          "apr_15d",
+          "stability",
+          "coverage",
+          "long_market_id",
+          "short_market_id"
+        ]
+      },
+      "HistoryPoint": {
+        "type": "object",
+        "properties": {
+          "funding_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "apr": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "funding_time",
+          "apr"
+        ]
+      },
+      "MarketsEnvelope": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MarketRow"
+                }
+              }
+            },
+            "required": ["rows"]
+          },
+          "meta": {
+            "type": ["object", "null"]
+          },
+          "error": {
+            "type": "null"
+          }
+        },
+        "required": ["data", "meta", "error"]
+      },
+      "ArbitrageEnvelope": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ArbitrageRow"
+                }
+              }
+            },
+            "required": ["rows"]
+          },
+          "meta": {
+            "type": ["object", "null"]
+          },
+          "error": {
+            "type": "null"
+          }
+        },
+        "required": ["data", "meta", "error"]
+      },
+      "HistoryEnvelope": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "rows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/HistoryPoint"
+                }
+              }
+            },
+            "required": ["rows"]
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "days": {
+                "type": "integer"
+              },
+              "funding_period_hours": {
+                "type": ["integer", "null"]
+              }
+            },
+            "required": ["days", "funding_period_hours"]
+          },
+          "error": {
+            "type": "null"
+          }
+        },
+        "required": ["data", "meta", "error"]
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "null"
+          },
+          "meta": {
+            "type": ["object", "null"]
+          },
+          "error": {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        },
+        "required": ["data", "meta", "error"]
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "responses": {
+      "ValidationError": {
+        "description": "Validation error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            },
+            "example": {
+              "data": null,
+              "meta": null,
+              "error": {
+                "code": "VALIDATION_ERROR",
+                "message": "Invalid market_id/market_ids format",
+                "details": null
+              }
+            }
+          }
+        }
+      },
+      "InternalError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            },
+            "example": {
+              "data": null,
+              "meta": null,
+              "error": {
+                "code": "INTERNAL_ERROR",
+                "message": "Internal server error",
+                "details": null
+              }
+            }
+          }
+        }
       }
     }
   }

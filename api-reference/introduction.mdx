@@ -1,21 +1,21 @@
 ---
-title: "API introduction"
-description: "Overview of the bendbasis API documentation"
+title: "Introduction"
+description: "Overview of bendbasis public API"
 ---
 
 ## Base URL
 
 `https://bendbasis.com`
 
-All public endpoints are served under `/api/public/v1/...`.
+All public endpoints are available under `/api/public/v1/...`.
 
 ## Authentication
 
-Public endpoints do not require authentication.
+Public funding endpoints do not require authentication.
 
 ## Response envelope
 
-Every endpoint returns the same top-level envelope:
+All endpoints use this top-level shape:
 
 ```json
 {
@@ -25,11 +25,7 @@ Every endpoint returns the same top-level envelope:
 }
 ```
 
-- `data`: response payload
-- `meta`: optional metadata object
-- `error`: `null` on success, object on failure
-
-## Error shape
+## Error format
 
 ```json
 {
@@ -37,20 +33,12 @@ Every endpoint returns the same top-level envelope:
   "meta": null,
   "error": {
     "code": "VALIDATION_ERROR",
-    "message": "Invalid market_id/market_ids format",
+    "message": "Invalid request",
     "details": null
   }
 }
 ```
 
-Common `error.code` values:
+## Versioning
 
-- `VALIDATION_ERROR` (400)
-- `INTERNAL_ERROR` (500)
-
-## Versioning and caching
-
-- `X-API-Version: v1` is included in responses.
-- Endpoints use `Cache-Control` headers for edge caching.
-
-Use the pages in **Public endpoints** for exact request and response formats.
+Responses include `X-API-Version: v1`.

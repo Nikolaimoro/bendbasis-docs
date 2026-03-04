@@ -3,40 +3,50 @@
   "theme": "mint",
   "name": "bendbasis docs",
   "colors": {
-    "primary": "#60A5FA",
-    "light": "#93C5FD",
+    "primary": "#2563EB",
+    "light": "#60A5FA",
     "dark": "#1D4ED8"
   },
-  "favicon": "/favicon.svg",
+  "modeToggle": {
+    "default": "dark"
+  },
+  "favicon": "/favicon.ico",
+  "openapi": "/api-reference/openapi.json",
+  "api": {
+    "baseUrl": "https://bendbasis.com",
+    "playground": {
+      "mode": "show"
+    }
+  },
   "navigation": {
     "tabs": [
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": [
-              "index",
-              "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Public endpoints",
-            "pages": [
-              "api-reference/public-endpoints/markets",
-              "api-reference/public-endpoints/arbitrage",
-              "api-reference/public-endpoints/market-history"
-            ]
-          }
-        ]
-      },
       {
         "tab": "Guides",
         "groups": [
           {
             "group": "Guides",
             "pages": [
+              "index",
               "guides/coming-soon"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api-reference/introduction"
+            ]
+          },
+          {
+            "group": "Funding",
+            "pages": [
+              "api-reference/funding/markets",
+              "api-reference/funding/arbitrage",
+              "api-reference/funding/history"
             ]
           }
         ]
@@ -48,11 +58,6 @@
           "anchor": "Main Site",
           "href": "https://bendbasis.com/funding",
           "icon": "globe"
-        },
-        {
-          "anchor": "Open App",
-          "href": "https://bendbasis.com/funding",
-          "icon": "arrow-up-right-from-square"
         }
       ]
     }
