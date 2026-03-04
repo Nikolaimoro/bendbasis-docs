@@ -93,7 +93,7 @@
       "get": {
         "summary": "Arbitrage opportunities",
         "operationId": "getFundingArbitrage",
-        "description": "Arbitrage opportunities with normalized public fields.",
+        "description": "Arbitrage opportunities with normalized public fields, including long/short exchange and quote context.",
         "parameters": [
           {
             "name": "base_assets",
@@ -137,14 +137,22 @@
                     "apr_15d": 74.64,
                     "stability": 1,
                     "long_market_id": 2396751,
-                    "short_market_id": 2295154
+                    "short_market_id": 2295154,
+                    "long_exchange": "edgex",
+                    "long_quote": "USD",
+                    "short_exchange": "gate",
+                    "short_quote": "USDT"
                   },
                   {
                     "base_asset": "FIL",
                     "apr_15d": 49.95,
                     "stability": 0.987461,
                     "long_market_id": 9422404,
-                    "short_market_id": 268893
+                    "short_market_id": 268893,
+                    "long_exchange": "gains",
+                    "long_quote": "Arb USDC",
+                    "short_exchange": "grvt",
+                    "short_quote": "USDT"
                   }
                 ]
               }
@@ -311,22 +319,49 @@
         "type": "object",
         "properties": {
           "base_asset": {
-            "type": "string"
+            "type": "string",
+            "description": "Base asset symbol."
           },
           "apr_15d": {
-            "type": "number"
+            "type": "number",
+            "description": "15-day APR spread in percent."
           },
           "stability": {
             "type": [
               "number",
               "null"
-            ]
+            ],
+            "description": "Stability score for the opportunity."
           },
           "long_market_id": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Market ID for the long leg."
           },
           "short_market_id": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Market ID for the short leg."
+          },
+          "long_exchange": {
+            "type": "string",
+            "description": "Exchange name for the long leg."
+          },
+          "long_quote": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Quote currency for the long leg."
+          },
+          "short_exchange": {
+            "type": "string",
+            "description": "Exchange name for the short leg."
+          },
+          "short_quote": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Quote currency for the short leg."
           }
         }
       },
