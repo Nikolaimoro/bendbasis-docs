@@ -1,0 +1,75 @@
+---
+title: "List markets"
+description: "Funding market snapshot with normalized APR fields"
+---
+
+## Endpoint
+
+`GET /api/public/v1/funding/markets`
+
+## Query parameters
+
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `market_id` | integer | No | Filter by one market ID. |
+| `market_ids` | csv<integer> or repeated query param | No | Filter by multiple market IDs. |
+
+Notes:
+
+- You can pass `market_ids=1,2,3` or repeated `market_ids=1&market_ids=2`.
+- The endpoint accepts up to 400 unique market IDs.
+- Funding values are returned in APR.
+
+## Request example
+
+```bash
+curl -sS "https://bendbasis.com/api/public/v1/funding/markets?market_id=1"
+```
+
+## Response example
+
+```json
+{
+  "data": {
+    "rows": [
+      {
+        "market_id": 1,
+        "exchange": "bybit",
+        "open_interest": 5526243.12,
+        "volume_24h": 3172244.1706,
+        "funding_rate_live": 10.95,
+        "funding_rate_1d": -9.57,
+        "funding_rate_3d": -20.69,
+        "funding_rate_7d": -9.02,
+        "funding_rate_15d": -97.83,
+        "funding_rate_30d": -214.92,
+        "base_asset": "0G",
+        "quote_asset": "USDT"
+      }
+    ]
+  },
+  "meta": null,
+  "error": null
+}
+```
+
+## Response fields
+
+Each item in `data.rows` has:
+
+- `market_id`: `number | null`
+- `exchange`: `string`
+- `open_interest`: `number | null`
+- `volume_24h`: `number | null`
+- `funding_rate_live`: `number | null`
+- `funding_rate_1d`: `number | null`
+- `funding_rate_3d`: `number | null`
+- `funding_rate_7d`: `number | null`
+- `funding_rate_15d`: `number | null`
+- `funding_rate_30d`: `number | null`
+- `base_asset`: `string`
+- `quote_asset`: `string`
+
+## Cache policy
+
+`Cache-Control: public, max-age=0, s-maxage=300, stale-while-revalidate=60`

@@ -1,0 +1,53 @@
+---
+title: "Get market history"
+description: "Historical funding values for one market"
+---
+
+## Endpoint
+
+`GET /api/public/v1/funding/markets/{marketId}/history`
+
+## Parameters
+
+| Name | Type | Location | Required | Description |
+| --- | --- | --- | --- | --- |
+| `marketId` | integer | Path | Yes | Target market ID. |
+| `days` | integer | Query | No | History window size. Allowed range: `1..30`. Default: `30`. |
+
+## Request example
+
+```bash
+curl -sS "https://bendbasis.com/api/public/v1/funding/markets/1/history?days=30"
+```
+
+## Response example
+
+```json
+{
+  "data": {
+    "rows": [
+      {
+        "funding_time": "2026-03-04T08:00:00Z",
+        "apr": 12.34
+      }
+    ]
+  },
+  "meta": {
+    "days": 30,
+    "funding_period_hours": 8
+  },
+  "error": null
+}
+```
+
+## Response fields
+
+- `data.rows`: historical points for the market.
+- `meta.days`: effective window size in days.
+- `meta.funding_period_hours`: detected market funding period, when available.
+
+## Notes
+
+- Funding values are returned in APR.
+- Cache TTL is aligned to the market funding period when it is known.
+- A publication lag buffer is applied before long cache windows.

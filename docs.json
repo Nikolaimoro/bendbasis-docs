@@ -5,11 +5,7 @@
   "colors": {
     "primary": "#60A5FA",
     "light": "#93C5FD",
-    "dark": "#1D4ED8",
-    "background": {
-      "light": "#1C202F",
-      "dark": "#1C202F"
-    }
+    "dark": "#1D4ED8"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -18,10 +14,18 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
             "pages": [
               "index",
               "api-reference/introduction"
+            ]
+          },
+          {
+            "group": "Public endpoints",
+            "pages": [
+              "api-reference/public-endpoints/markets",
+              "api-reference/public-endpoints/arbitrage",
+              "api-reference/public-endpoints/market-history"
             ]
           }
         ]
@@ -42,7 +46,7 @@
       "anchors": [
         {
           "anchor": "Main Site",
-          "href": "https://bendbasis.com",
+          "href": "https://bendbasis.com/funding",
           "icon": "globe"
         },
         {
@@ -61,7 +65,7 @@
     "primary": {
       "type": "button",
       "label": "Main Site",
-      "href": "https://bendbasis.com"
+      "href": "https://bendbasis.com/funding"
     }
   },
   "contextual": {
