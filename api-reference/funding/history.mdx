@@ -5,3 +5,7 @@ openapi: "GET /api/public/v1/funding/markets/{marketId}/history"
 ---
 
 Use this endpoint to fetch funding history for a specific `marketId`.
+
+<Note>
+History updates after the actual funding payout is published. Refresh timing depends on the market's funding period.
+</Note>
