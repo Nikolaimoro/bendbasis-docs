@@ -93,7 +93,7 @@
       "get": {
         "summary": "Arbitrage opportunities",
         "operationId": "getFundingArbitrage",
-        "description": "Arbitrage opportunities with normalized public fields, including long/short exchange and quote context.",
+        "description": "Arbitrage opportunities with long/short exchange and quote context.",
         "parameters": [
           {
             "name": "base_assets",
@@ -104,6 +104,16 @@
               "type": "string"
             },
             "example": "BTC,ETH"
+          },
+          {
+            "name": "exchanges",
+            "in": "query",
+            "required": false,
+            "description": "Optional exchange filter. Supports CSV (`bybit,binance`) and repeated query params (`?exchanges=bybit&exchanges=binance`). Match applies to either long or short leg.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "bybit,binance"
           }
         ],
         "responses": {
@@ -120,7 +130,7 @@
                 "schema": {
                   "type": "string"
                 },
-                "example": "public, max-age=0, s-maxage=3600, stale-while-revalidate=300"
+                "example": "public, max-age=0, s-maxage=<seconds-until-08:30-UTC>, stale-while-revalidate=300"
               }
             },
             "content": {

@@ -7,32 +7,8 @@ openapi: "GET /api/public/v1/funding/arbitrage"
 Use this endpoint to fetch arbitrage opportunities across markets.
 
 Use `base_assets` to filter by asset symbols (for example: `ETH,BTC`).
+Use `exchanges` to filter by exchange keys (for example: `bybit,binance`).
 
 <Note>
 Each row contains both leg context: `long_exchange`, `long_quote`, `short_exchange`, `short_quote`.
 </Note>
-
-### Example request
-
-```bash
-curl --request GET \
-  --url "https://bendbasis.com/api/public/v1/funding/arbitrage?base_assets=ETH,BTC"
-```
-
-### Example response
-
-```json
-[
-  {
-    "base_asset": "ETH",
-    "apr_15d": 36.21,
-    "stability": 0.96296,
-    "long_market_id": 5535782,
-    "short_market_id": 268891,
-    "long_exchange": "gains",
-    "long_quote": "Arb USDC",
-    "short_exchange": "grvt",
-    "short_quote": "USDT"
-  }
-]
-```
