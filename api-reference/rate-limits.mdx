@@ -7,11 +7,11 @@ There are currently no hard rate limits in place, but please be respectful with 
 
 ## Refresh cadence by endpoint
 
-- `GET /api/public/v1/funding/markets`
+- `GET /api/v1/public/funding/markets`
   Data is refreshed every 60 seconds. There is no benefit to polling faster than once per minute.
 
-- `GET /api/public/v1/funding/arbitrage`
+- `GET /api/v1/public/funding/arbitrage`
   Data is refreshed once per day (around 08:30 UTC). Polling more often does not provide fresher values.
 
-- `GET /api/public/v1/funding/markets/{marketId}/history`
+- `GET /api/v1/public/funding/markets/{marketId}/history`
   New points appear only after the funding event is published. Refresh timing depends on the market's funding period and publish lag.

@@ -11,7 +11,7 @@
     }
   ],
   "paths": {
-    "/api/public/v1/funding/markets": {
+    "/api/v1/public/funding/markets": {
       "get": {
         "summary": "Markets",
         "operationId": "getFundingMarkets",
@@ -89,7 +89,7 @@
         }
       }
     },
-    "/api/public/v1/funding/arbitrage": {
+    "/api/v1/public/funding/arbitrage": {
       "get": {
         "summary": "Arbitrage opportunities",
         "operationId": "getFundingArbitrage",
@@ -171,7 +171,7 @@
         }
       }
     },
-    "/api/public/v1/funding/markets/{marketId}/history": {
+    "/api/v1/public/funding/markets/{marketId}/history": {
       "get": {
         "summary": "Funding history",
         "operationId": "getFundingHistory",
