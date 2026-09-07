@@ -3,7 +3,7 @@ title: "Rate limits"
 description: "Update frequency and request guidance for the public API"
 ---
 
-There are currently no hard rate limits in place, but please be respectful with your requests.
+The public API does not currently publish a fixed request quota. Automated abuse protection can still return `429 Too Many Requests`. If this happens, reduce your request rate and retry with backoff.
 
 ## Refresh cadence by endpoint
 
@@ -11,7 +11,7 @@ There are currently no hard rate limits in place, but please be respectful with 
   Data is refreshed every 60 seconds. There is no benefit to polling faster than once per minute.
 
 - `GET /api/v1/public/funding/arbitrage`
-  Data is refreshed once per day (around 08:30 UTC). Polling more often does not provide fresher values.
+  The 7-day, 15-day, and 30-day windows are refreshed once per day (around 08:30 UTC). Polling more often does not provide fresher values.
 
 - `GET /api/v1/public/funding/markets/{marketId}/history`
   New points appear only after the funding event is published. Refresh timing depends on the market's funding period and publish lag.

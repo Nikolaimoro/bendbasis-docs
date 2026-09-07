@@ -6,9 +6,16 @@ openapi: "GET /api/v1/public/funding/arbitrage"
 
 Use this endpoint to fetch arbitrage opportunities across markets.
 
+Use the optional `window` query parameter to select the calculation window. Supported values are `7`, `15`, and `30`. The default is `15`.
+
+```bash
+curl "https://bendbasis.com/api/v1/public/funding/arbitrage?window=7"
+```
+
 Use `base_assets` to filter by asset symbols (for example: `ETH,BTC`).
 Use `exchanges` to filter by exchange keys (for example: `bybit,binance`).
 
 <Note>
-Each row contains both leg context: `long_exchange`, `long_quote`, `short_exchange`, `short_quote`.
+Each row identifies both legs through `long_market_id` and `short_market_id`. Use the markets endpoint to retrieve additional market details such as quote assets.
+The `apr` and `stability` fields use the selected calculation window.
 </Note>
