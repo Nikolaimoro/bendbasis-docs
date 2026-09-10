@@ -2,15 +2,119 @@
   "openapi": "3.1.0",
   "info": {
     "title": "bendbasis API",
-    "description": "Funding arbitrage data from bendbasis.",
+    "description": "Funding market and arbitrage data from bendbasis.",
     "version": "1.0.0-preview"
   },
-  "servers": [
-    {
-      "url": "https://api.bendbasis.com"
-    }
-  ],
+  "servers": [{ "url": "https://api.bendbasis.com" }],
   "paths": {
+    "/v1/funding/markets": {
+      "get": {
+        "summary": "List funding markets",
+        "operationId": "listFundingMarkets",
+        "description": "Returns a filtered, sorted, and cursor-paginated collection of funding markets.",
+        "parameters": [
+          {
+            "name": "market_ids",
+            "in": "query",
+            "required": false,
+            "description": "Market IDs as CSV or repeated parameters.",
+            "schema": { "type": "string" },
+            "example": "101,205,310"
+          },
+          {
+            "name": "base_assets",
+            "in": "query",
+            "required": false,
+            "description": "Base asset symbols as CSV or repeated parameters.",
+            "schema": { "type": "string" },
+            "example": "BTC,ETH"
+          },
+          {
+            "name": "exchanges",
+            "in": "query",
+            "required": false,
+            "description": "Exchange keys as CSV or repeated parameters.",
+            "schema": { "type": "string" },
+            "example": "binance,bybit"
+          },
+          {
+            "name": "quote_assets",
+            "in": "query",
+            "required": false,
+            "description": "Quote asset symbols as CSV or repeated parameters.",
+            "schema": { "type": "string" },
+            "example": "USDT,USDC"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of rows to return.",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 1000, "default": 100 }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "description": "Opaque cursor returned by the previous page.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Primary sort field.",
+            "schema": {
+              "type": "string",
+              "enum": ["volume", "oi", "apr_live", "apr_1d", "apr_3d", "apr_7d", "apr_15d", "apr_30d"],
+              "default": "volume"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "description": "Primary sort direction. Null values are always last.",
+            "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Funding market collection",
+            "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MarketCollection" } } }
+          },
+          "400": { "$ref": "#/components/responses/InvalidRequest" }
+        }
+      }
+    },
+    "/v1/funding/markets/{market_id}": {
+      "get": {
+        "summary": "Get a funding market",
+        "operationId": "getFundingMarket",
+        "parameters": [
+          {
+            "name": "market_id",
+            "in": "path",
+            "required": true,
+            "description": "Unique market ID.",
+            "schema": { "type": "integer", "minimum": 1 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Funding market",
+            "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MarketResponse" } } }
+          },
+          "400": { "$ref": "#/components/responses/InvalidRequest" },
+          "404": {
+            "description": "Market not found.",
+            "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } }
+          }
+        }
+      }
+    },
     "/v1/funding/arbitrage": {
       "get": {
         "summary": "List arbitrage opportunities",
@@ -22,11 +126,7 @@
             "in": "query",
             "required": false,
             "description": "Calculation window in days.",
-            "schema": {
-              "type": "integer",
-              "enum": [7, 15, 30],
-              "default": 15
-            }
+            "schema": { "type": "integer", "enum": [7, 15, 30], "default": 15 }
           },
           {
             "name": "base_assets",
@@ -49,12 +149,7 @@
             "in": "query",
             "required": false,
             "description": "Number of rows to return.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 500,
-              "default": 100
-            }
+            "schema": { "type": "integer", "minimum": 1, "maximum": 500, "default": 100 }
           },
           {
             "name": "cursor",
@@ -68,99 +163,96 @@
             "in": "query",
             "required": false,
             "description": "Primary sort field.",
-            "schema": {
-              "type": "string",
-              "enum": ["apr", "stability"],
-              "default": "apr"
-            }
+            "schema": { "type": "string", "enum": ["apr", "stability"], "default": "apr" }
           },
           {
             "name": "order",
             "in": "query",
             "required": false,
             "description": "Primary sort direction. Null stability values are always last.",
-            "schema": {
-              "type": "string",
-              "enum": ["asc", "desc"],
-              "default": "desc"
-            }
+            "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" }
           }
         ],
         "responses": {
           "200": {
             "description": "Arbitrage collection",
-            "headers": {
-              "X-API-Version": {
-                "schema": { "type": "string" },
-                "example": "v1"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ArbitrageCollection" }
-              }
-            }
+            "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ArbitrageCollection" } } }
           },
-          "400": {
-            "description": "Invalid query parameter or incompatible cursor.",
-            "content": {
-              "application/problem+json": {
-                "schema": { "$ref": "#/components/schemas/Problem" }
-              }
-            }
-          }
+          "400": { "$ref": "#/components/responses/InvalidRequest" }
         }
       }
     }
   },
   "components": {
+    "responses": {
+      "InvalidRequest": {
+        "description": "Invalid query parameter or incompatible cursor.",
+        "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } }
+      }
+    },
     "schemas": {
+      "MarketCollection": {
+        "type": "object",
+        "required": ["data", "next_cursor"],
+        "properties": {
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/FundingMarket" } },
+          "next_cursor": { "type": ["string", "null"] }
+        }
+      },
+      "MarketResponse": {
+        "type": "object",
+        "required": ["data"],
+        "properties": { "data": { "$ref": "#/components/schemas/FundingMarket" } }
+      },
+      "FundingMarket": {
+        "type": "object",
+        "required": ["market_id", "exchange", "symbol", "base_asset", "quote_asset", "funding_interval", "funding_rate_apr", "open_interest", "volume_24h"],
+        "properties": {
+          "market_id": { "type": "integer" },
+          "exchange": { "type": "string", "example": "binance" },
+          "symbol": { "type": ["string", "null"], "example": "BTCUSDT" },
+          "base_asset": { "type": "string", "example": "BTC" },
+          "quote_asset": { "type": "string", "example": "USDT" },
+          "funding_interval": { "type": ["integer", "null"], "description": "Funding interval in hours." },
+          "funding_rate_apr": { "$ref": "#/components/schemas/FundingRateApr" },
+          "open_interest": { "type": ["number", "null"], "description": "Current open interest in comparable USD or quote notional." },
+          "volume_24h": { "type": ["number", "null"], "description": "Rolling 24-hour volume in comparable USD or quote notional." }
+        }
+      },
+      "FundingRateApr": {
+        "type": "object",
+        "description": "Annualized funding rates in percent. Each historical field uses the named rolling window.",
+        "required": ["live", "1d", "3d", "7d", "15d", "30d"],
+        "properties": {
+          "live": { "type": ["number", "null"] },
+          "1d": { "type": ["number", "null"] },
+          "3d": { "type": ["number", "null"] },
+          "7d": { "type": ["number", "null"] },
+          "15d": { "type": ["number", "null"] },
+          "30d": { "type": ["number", "null"] }
+        }
+      },
       "ArbitrageCollection": {
         "type": "object",
-        "required": ["data", "pagination", "meta"],
+        "required": ["data", "next_cursor", "meta"],
         "properties": {
-          "data": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/ArbitrageOpportunity" }
-          },
-          "pagination": { "$ref": "#/components/schemas/Pagination" },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/ArbitrageOpportunity" } },
+          "next_cursor": { "type": ["string", "null"] },
           "meta": { "$ref": "#/components/schemas/ArbitrageMeta" }
         }
       },
       "ArbitrageOpportunity": {
         "type": "object",
-        "required": [
-          "base_asset",
-          "apr",
-          "stability",
-          "long_market_id",
-          "short_market_id",
-          "long_exchange",
-          "short_exchange"
-        ],
+        "required": ["base_asset", "apr", "stability", "long_market_id", "short_market_id", "long_exchange", "short_exchange"],
         "properties": {
           "base_asset": { "type": "string", "example": "BTC" },
-          "apr": {
-            "type": "number",
-            "description": "APR spread in percent for the selected window."
-          },
-          "stability": {
-            "type": ["number", "null"],
-            "description": "Stability score for the selected window."
-          },
+          "apr": { "type": "number", "description": "APR spread in percent for the selected window." },
+          "stability": { "type": ["number", "null"], "description": "Stability score for the selected window." },
           "long_market_id": { "type": "integer" },
           "short_market_id": { "type": "integer" },
           "long_exchange": { "type": "string" },
           "short_exchange": { "type": "string" }
-        }
-      },
-      "Pagination": {
-        "type": "object",
-        "required": ["limit", "has_more", "next_cursor"],
-        "properties": {
-          "limit": { "type": "integer", "minimum": 1, "maximum": 500 },
-          "has_more": { "type": "boolean" },
-          "next_cursor": { "type": ["string", "null"] }
         }
       },
       "ArbitrageMeta": {

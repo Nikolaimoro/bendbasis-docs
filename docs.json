@@ -47,6 +47,8 @@
           {
             "group": "Funding",
             "pages": [
+              "api-reference/funding/markets",
+              "api-reference/funding/market",
               "api-reference/funding/arbitrage"
             ]
           },

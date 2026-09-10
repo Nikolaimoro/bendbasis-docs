@@ -1,0 +1,13 @@
+---
+title: "Funding market"
+description: "Retrieve one funding market by ID"
+openapi: "GET /v1/funding/markets/{market_id}"
+---
+
+Returns one market using its stable `market_id`.
+
+```bash
+curl "https://api.bendbasis.com/v1/funding/markets/101"
+```
+
+`funding_interval` is measured in hours. Values inside `funding_rate_apr` are annualized percentages.

@@ -8,7 +8,7 @@ The original public endpoints remain available during the migration period. Exis
 | Legacy endpoint | Replacement |
 | --- | --- |
 | `GET https://bendbasis.com/api/v1/public/funding/arbitrage` | `GET https://api.bendbasis.com/v1/funding/arbitrage` |
-| `GET https://bendbasis.com/api/v1/public/funding/markets` | Not yet available in the new API |
+| `GET https://bendbasis.com/api/v1/public/funding/markets` | `GET https://api.bendbasis.com/v1/funding/markets` |
 | `GET https://bendbasis.com/api/v1/public/funding/markets/{marketId}/history` | Not yet available in the new API |
 
 The legacy arbitrage endpoint returns the complete result as one JSON array. Its replacement uses cursor pagination and returns a response envelope, so it is not response-compatible and should not be substituted without updating the client.

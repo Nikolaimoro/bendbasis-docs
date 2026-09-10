@@ -12,4 +12,4 @@ Results are sorted by APR descending by default. Use `sort` and `order` to chang
 curl "https://api.bendbasis.com/v1/funding/arbitrage?base_assets=BTC&window=15&limit=100&sort=stability&order=desc"
 ```
 
-When `has_more` is `true`, pass `next_cursor` unchanged in the next request. A cursor is valid only with the same filters and sorting options used to create it.
+When `next_cursor` is not `null`, pass it unchanged in the next request. A cursor is valid only with the same filters and sorting options used to create it.

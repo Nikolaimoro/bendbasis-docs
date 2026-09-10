@@ -1,12 +1,17 @@
 ---
-title: "Markets"
-description: "Funding market snapshot with normalized APR fields"
-openapi: "GET /api/v1/public/funding/markets"
+title: "Funding markets"
+description: "List, filter, and sort funding markets"
+openapi: "GET /v1/funding/markets"
 ---
 
-Use this endpoint to fetch market-level funding snapshots.  
-Use `market_ids` to filter specific markets.
+Returns all current APR windows, open interest, and 24-hour volume for each market.
 
-<Note>
-All `funding_rate*` fields are returned as APR values (annualized percent rate, in `%`).
-</Note>
+Use `market_ids` to request several known markets in one call:
+
+```bash
+curl "https://api.bendbasis.com/v1/funding/markets?market_ids=101,205,310"
+```
+
+`funding_interval` is measured in hours. Values inside `funding_rate_apr` are annualized percentages.
+
+When `next_cursor` is not `null`, pass it unchanged as `cursor` and keep the other query parameters unchanged.
