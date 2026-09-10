@@ -49,6 +49,7 @@
             "pages": [
               "api-reference/funding/markets",
               "api-reference/funding/market",
+              "api-reference/funding/history",
               "api-reference/funding/arbitrage"
             ]
           },

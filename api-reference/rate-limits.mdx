@@ -9,9 +9,13 @@ The developer preview does not publish a fixed account request quota. Automated 
 
 `GET /v1/funding/markets` returns 100 rows by default and accepts a maximum `limit` of 1,000.
 
+`GET /v1/funding/markets/{market_id}/history` accepts a maximum time range of 30 days. It does not use pagination.
+
 ## Refresh cadence by endpoint
 
 - `GET /v1/funding/arbitrage`
   The 7-day, 15-day, and 30-day windows are refreshed once per day (around 04:00 UTC). Polling more often does not provide fresher values.
 - `GET /v1/funding/markets`
   Market metrics and funding APR windows are refreshed every five minutes.
+- `GET /v1/funding/markets/{market_id}/history`
+  History updates after an exchange publishes a funding payment. Timing follows each observation's `funding_interval`.

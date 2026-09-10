@@ -115,6 +115,48 @@
         }
       }
     },
+    "/v1/funding/markets/{market_id}/history": {
+      "get": {
+        "summary": "Get funding history",
+        "operationId": "getFundingHistory",
+        "description": "Returns raw funding observations for one market, newest first. The maximum range is 30 days.",
+        "parameters": [
+          {
+            "name": "market_id",
+            "in": "path",
+            "required": true,
+            "description": "Unique market ID.",
+            "schema": { "type": "integer", "minimum": 1 }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "Inclusive range start. Defaults to 30 days before `to`.",
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "description": "Exclusive range end. Defaults to the current time.",
+            "schema": { "type": "string", "format": "date-time" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Funding history",
+            "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FundingHistoryResponse" } } }
+          },
+          "400": { "$ref": "#/components/responses/InvalidRequest" },
+          "404": {
+            "description": "Market not found.",
+            "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } }
+          }
+        }
+      }
+    },
     "/v1/funding/arbitrage": {
       "get": {
         "summary": "List arbitrage opportunities",
@@ -231,6 +273,32 @@
           "7d": { "type": ["number", "null"] },
           "15d": { "type": ["number", "null"] },
           "30d": { "type": ["number", "null"] }
+        }
+      },
+      "FundingHistoryResponse": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/FundingHistoryPoint" }
+          }
+        }
+      },
+      "FundingHistoryPoint": {
+        "type": "object",
+        "required": ["funding_time", "funding_rate", "funding_interval"],
+        "properties": {
+          "funding_time": { "type": "string", "format": "date-time" },
+          "funding_rate": {
+            "type": ["string", "null"],
+            "description": "Signed decimal funding rate for one funding interval. This is not a percentage or APR.",
+            "example": "0.0001"
+          },
+          "funding_interval": {
+            "type": ["integer", "null"],
+            "description": "Funding interval in hours for this observation."
+          }
         }
       },
       "ArbitrageCollection": {
