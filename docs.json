@@ -21,18 +21,6 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Guides",
-            "pages": [
-              "index",
-              "guides/coming-soon"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "API Reference",
         "groups": [
           {
@@ -41,7 +29,14 @@
               "api-reference/introduction",
               "api-reference/pagination-and-errors",
               "api-reference/rate-limits",
-              "api-reference/commercial-use"
+              "api-reference/commercial-use",
+              {
+                "group": "Legacy",
+                "expanded": false,
+                "pages": [
+                  "api-reference/legacy/public-api"
+                ]
+              }
             ]
           },
           {
@@ -51,12 +46,6 @@
               "api-reference/funding/market",
               "api-reference/funding/history",
               "api-reference/funding/arbitrage"
-            ]
-          },
-          {
-            "group": "Legacy",
-            "pages": [
-              "api-reference/legacy/public-api"
             ]
           }
         ]

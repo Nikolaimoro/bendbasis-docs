@@ -11,7 +11,13 @@ The original public endpoints remain available during the migration period. Exis
 | `GET https://bendbasis.com/api/v1/public/funding/markets` | `GET https://api.bendbasis.com/v1/funding/markets` |
 | `GET https://bendbasis.com/api/v1/public/funding/markets/{marketId}/history` | `GET https://api.bendbasis.com/v1/funding/markets/{market_id}/history` |
 
-The legacy arbitrage endpoint returns the complete result as one JSON array. Its replacement uses cursor pagination and returns a response envelope, so it is not response-compatible and should not be substituted without updating the client.
+The new endpoints are not response-compatible with the legacy API.
+
+| Endpoint | Main response change |
+| --- | --- |
+| Markets | Response envelope, pagination, and new field structure |
+| History | Response envelope and raw funding rates |
+| Arbitrage | Response envelope and pagination |
 
 <Warning>
 Do not start new integrations with legacy endpoints.

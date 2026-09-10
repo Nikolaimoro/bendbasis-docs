@@ -17,7 +17,7 @@
             "name": "market_ids",
             "in": "query",
             "required": false,
-            "description": "Market IDs as CSV or repeated parameters.",
+            "description": "Market IDs as CSV or repeated parameters. Up to 400 IDs.",
             "schema": { "type": "string" },
             "example": "101,205,310"
           },
@@ -25,7 +25,7 @@
             "name": "base_assets",
             "in": "query",
             "required": false,
-            "description": "Base asset symbols as CSV or repeated parameters.",
+            "description": "Base asset symbols as CSV or repeated parameters. Up to 100 values.",
             "schema": { "type": "string" },
             "example": "BTC,ETH"
           },
@@ -33,7 +33,7 @@
             "name": "exchanges",
             "in": "query",
             "required": false,
-            "description": "Exchange keys as CSV or repeated parameters.",
+            "description": "Exchange keys as CSV or repeated parameters. Up to 100 values.",
             "schema": { "type": "string" },
             "example": "binance,bybit"
           },
@@ -41,7 +41,7 @@
             "name": "quote_assets",
             "in": "query",
             "required": false,
-            "description": "Quote asset symbols as CSV or repeated parameters.",
+            "description": "Quote asset symbols as CSV or repeated parameters. Up to 100 values.",
             "schema": { "type": "string" },
             "example": "USDT,USDC"
           },
@@ -84,7 +84,9 @@
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MarketCollection" } } }
           },
-          "400": { "$ref": "#/components/responses/InvalidRequest" }
+          "400": { "$ref": "#/components/responses/InvalidRequest" },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "500": { "$ref": "#/components/responses/InternalError" }
         }
       }
     },
@@ -111,7 +113,9 @@
           "404": {
             "description": "Market not found.",
             "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } }
-          }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "500": { "$ref": "#/components/responses/InternalError" }
         }
       }
     },
@@ -153,7 +157,9 @@
           "404": {
             "description": "Market not found.",
             "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } }
-          }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "500": { "$ref": "#/components/responses/InternalError" }
         }
       }
     },
@@ -174,7 +180,7 @@
             "name": "base_assets",
             "in": "query",
             "required": false,
-            "description": "Base asset symbols as CSV or repeated parameters.",
+            "description": "Base asset symbols as CSV or repeated parameters. Up to 100 values.",
             "schema": { "type": "string" },
             "example": "BTC,ETH"
           },
@@ -182,7 +188,7 @@
             "name": "exchanges",
             "in": "query",
             "required": false,
-            "description": "Exchange keys as CSV or repeated parameters. Matches either arbitrage leg.",
+            "description": "Exchange keys as CSV or repeated parameters. Matches either leg. Up to 100 values.",
             "schema": { "type": "string" },
             "example": "binance,bybit"
           },
@@ -221,7 +227,9 @@
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ArbitrageCollection" } } }
           },
-          "400": { "$ref": "#/components/responses/InvalidRequest" }
+          "400": { "$ref": "#/components/responses/InvalidRequest" },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "500": { "$ref": "#/components/responses/InternalError" }
         }
       }
     }
@@ -230,6 +238,13 @@
     "responses": {
       "InvalidRequest": {
         "description": "Invalid query parameter or incompatible cursor.",
+        "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } }
+      },
+      "RateLimited": {
+        "description": "Request rate exceeded. Retry with backoff."
+      },
+      "InternalError": {
+        "description": "Internal server error.",
         "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } }
       }
     },
@@ -316,7 +331,7 @@
         "properties": {
           "base_asset": { "type": "string", "example": "BTC" },
           "apr": { "type": "number", "description": "APR spread in percent for the selected window." },
-          "stability": { "type": ["number", "null"], "description": "Stability score for the selected window." },
+          "stability": { "type": ["number", "null"], "description": "Score from 0 to 1. Higher values indicate a more consistently sustained spread." },
           "long_market_id": { "type": "integer" },
           "short_market_id": { "type": "integer" },
           "long_exchange": { "type": "string" },
