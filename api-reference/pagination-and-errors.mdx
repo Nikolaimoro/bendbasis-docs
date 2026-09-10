@@ -14,7 +14,7 @@ Collection responses include the page data and an opaque cursor:
 }
 ```
 
-When `next_cursor` is not `null`, send it as the next request's `cursor`. A `null` value means there are no more results. Keep the filters and sorting unchanged. Cursors are opaque. Data may refresh between pages.
+When `next_cursor` is not `null`, pass it as `cursor` in the next request. Keep filters and sorting unchanged. Cursors remain valid across data refreshes, but results may move as live values change.
 
 ## Errors
 

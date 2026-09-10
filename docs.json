@@ -13,9 +13,9 @@
   "favicon": "/favicon.ico",
   "openapi": "/api-reference/openapi.json",
   "api": {
-    "baseUrl": "https://api.bendbasis.com",
     "playground": {
-      "mode": "show"
+      "display": "interactive",
+      "proxy": true
     }
   },
   "navigation": {

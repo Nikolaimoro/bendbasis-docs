@@ -17,33 +17,61 @@
             "name": "market_ids",
             "in": "query",
             "required": false,
-            "description": "Market IDs as CSV or repeated parameters. Up to 400 IDs.",
-            "schema": { "type": "string" },
-            "example": "101,205,310"
+            "description": "Market IDs. Up to 400.",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": { "type": "integer", "minimum": 1 },
+              "maxItems": 400,
+              "uniqueItems": true
+            },
+            "example": [101, 205, 310]
           },
           {
             "name": "base_assets",
             "in": "query",
             "required": false,
-            "description": "Base asset symbols as CSV or repeated parameters. Up to 100 values.",
-            "schema": { "type": "string" },
-            "example": "BTC,ETH"
+            "description": "Base asset symbols. Up to 100.",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" },
+              "maxItems": 100,
+              "uniqueItems": true
+            },
+            "example": ["BTC", "ETH"]
           },
           {
             "name": "exchanges",
             "in": "query",
             "required": false,
-            "description": "Exchange keys as CSV or repeated parameters. Up to 100 values.",
-            "schema": { "type": "string" },
-            "example": "binance,bybit"
+            "description": "Exchange keys. Up to 100.",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" },
+              "maxItems": 100,
+              "uniqueItems": true
+            },
+            "example": ["binance", "bybit"]
           },
           {
             "name": "quote_assets",
             "in": "query",
             "required": false,
-            "description": "Quote asset symbols as CSV or repeated parameters. Up to 100 values.",
-            "schema": { "type": "string" },
-            "example": "USDT,USDC"
+            "description": "Quote asset symbols. Up to 100.",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" },
+              "maxItems": 100,
+              "uniqueItems": true
+            },
+            "example": ["USDT", "USDC"]
           },
           {
             "name": "limit",
@@ -180,17 +208,31 @@
             "name": "base_assets",
             "in": "query",
             "required": false,
-            "description": "Base asset symbols as CSV or repeated parameters. Up to 100 values.",
-            "schema": { "type": "string" },
-            "example": "BTC,ETH"
+            "description": "Base asset symbols. Up to 100.",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" },
+              "maxItems": 100,
+              "uniqueItems": true
+            },
+            "example": ["BTC", "ETH"]
           },
           {
             "name": "exchanges",
             "in": "query",
             "required": false,
-            "description": "Exchange keys as CSV or repeated parameters. Matches either leg. Up to 100 values.",
-            "schema": { "type": "string" },
-            "example": "binance,bybit"
+            "description": "Exchange keys. Matches either leg. Up to 100.",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" },
+              "maxItems": 100,
+              "uniqueItems": true
+            },
+            "example": ["binance", "bybit"]
           },
           {
             "name": "limit",
