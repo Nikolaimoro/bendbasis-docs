@@ -1,276 +1,111 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "bendbasis Public API",
-    "description": "Public funding endpoints for markets, arbitrage opportunities, and funding history.",
-    "version": "1.0.0"
+    "title": "bendbasis API",
+    "description": "Funding arbitrage data from bendbasis.",
+    "version": "1.0.0-preview"
   },
   "servers": [
     {
-      "url": "https://bendbasis.com"
+      "url": "https://api.bendbasis.com"
     }
   ],
   "paths": {
-    "/api/v1/public/funding/markets": {
+    "/v1/funding/arbitrage": {
       "get": {
-        "summary": "Markets",
-        "operationId": "getFundingMarkets",
-        "description": "Funding market snapshot. All `funding_rate*` fields are APR values in percent.",
-        "parameters": [
-          {
-            "name": "market_ids",
-            "in": "query",
-            "required": false,
-            "description": "Optional market ID filter. Supports CSV (`1,2,3`) and repeated query params (`?market_ids=1&market_ids=2`).",
-            "schema": {
-              "type": "string"
-            },
-            "example": "1,2,3"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Markets response",
-            "headers": {
-              "X-API-Version": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "v1"
-              },
-              "Cache-Control": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "public, max-age=0, s-maxage=300, stale-while-revalidate=60"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MarketRow"
-                  }
-                },
-                "example": [
-                  {
-                    "market_id": 1,
-                    "exchange": "bybit",
-                    "base_asset": "0G",
-                    "quote_asset": "USDT",
-                    "open_interest": 5279289.65,
-                    "volume_24h": 2881100.8681,
-                    "funding_rate_live": -31.91,
-                    "funding_rate_1d": 2.95,
-                    "funding_rate_3d": -23.35,
-                    "funding_rate_7d": -9.4,
-                    "funding_rate_15d": -94.63,
-                    "funding_rate_30d": -212.71
-                  },
-                  {
-                    "market_id": 2,
-                    "exchange": "bybit",
-                    "base_asset": "BABYDOGE",
-                    "quote_asset": "USDT",
-                    "open_interest": 471050.14,
-                    "volume_24h": 288038.1897,
-                    "funding_rate_live": 10.95,
-                    "funding_rate_1d": 10.95,
-                    "funding_rate_3d": 10.95,
-                    "funding_rate_7d": 10.95,
-                    "funding_rate_15d": 10.55,
-                    "funding_rate_30d": 10.75
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/public/funding/arbitrage": {
-      "get": {
-        "summary": "Arbitrage opportunities",
-        "operationId": "getFundingArbitrage",
-        "description": "Arbitrage opportunities with long/short market and exchange context. APR spread and stability use the selected calculation window.",
+        "summary": "List arbitrage opportunities",
+        "operationId": "listFundingArbitrage",
+        "description": "Returns a filtered and cursor-paginated collection of funding arbitrage opportunities.",
         "parameters": [
           {
             "name": "window",
             "in": "query",
             "required": false,
-            "description": "Calculation window in days. Defaults to 15.",
+            "description": "Calculation window in days.",
             "schema": {
               "type": "integer",
-              "enum": [
-                7,
-                15,
-                30
-              ],
+              "enum": [7, 15, 30],
               "default": 15
-            },
-            "example": 7
+            }
           },
           {
             "name": "base_assets",
             "in": "query",
             "required": false,
-            "description": "Optional base asset filter. Supports CSV (`BTC,ETH`) and repeated query params (`?base_assets=BTC&base_assets=ETH`).",
-            "schema": {
-              "type": "string"
-            },
+            "description": "Base asset symbols as CSV or repeated parameters.",
+            "schema": { "type": "string" },
             "example": "BTC,ETH"
           },
           {
             "name": "exchanges",
             "in": "query",
             "required": false,
-            "description": "Optional exchange filter. Supports CSV (`bybit,binance`) and repeated query params (`?exchanges=bybit&exchanges=binance`). Match applies to either long or short leg.",
+            "description": "Exchange keys as CSV or repeated parameters. Matches either arbitrage leg.",
+            "schema": { "type": "string" },
+            "example": "binance,bybit"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of rows to return.",
             "schema": {
-              "type": "string"
-            },
-            "example": "bybit,binance"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500,
+              "default": 100
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "description": "Opaque cursor returned by the previous page.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Primary sort field.",
+            "schema": {
+              "type": "string",
+              "enum": ["apr", "stability"],
+              "default": "apr"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "description": "Primary sort direction. Null stability values are always last.",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "desc"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Arbitrage response",
+            "description": "Arbitrage collection",
             "headers": {
               "X-API-Version": {
-                "schema": {
-                  "type": "string"
-                },
+                "schema": { "type": "string" },
                 "example": "v1"
-              },
-              "Cache-Control": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "public, max-age=0, s-maxage=<seconds-until-08:30-UTC>, stale-while-revalidate=300"
               }
             },
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArbitrageRow"
-                  }
-                },
-                "example": [
-                  {
-                    "base_asset": "XCU",
-                    "apr": 74.64,
-                    "stability": 1,
-                    "long_market_id": 2396751,
-                    "short_market_id": 2295154,
-                    "long_exchange": "edgex",
-                    "short_exchange": "gate"
-                  },
-                  {
-                    "base_asset": "FIL",
-                    "apr": 49.95,
-                    "stability": 0.987461,
-                    "long_market_id": 9422404,
-                    "short_market_id": 268893,
-                    "long_exchange": "gains",
-                    "short_exchange": "grvt"
-                  }
-                ]
+                "schema": { "$ref": "#/components/schemas/ArbitrageCollection" }
               }
             }
           },
           "400": {
-            "description": "Invalid calculation window or filter value.",
+            "description": "Invalid query parameter or incompatible cursor.",
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "code",
-                    "message"
-                  ],
-                  "properties": {
-                    "code": {
-                      "type": "string",
-                      "example": "VALIDATION_ERROR"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid arbitrage window; expected 7, 15 or 30"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/public/funding/markets/{marketId}/history": {
-      "get": {
-        "summary": "Funding history",
-        "operationId": "getFundingHistory",
-        "description": "Historical funding values for one market.",
-        "parameters": [
-          {
-            "name": "marketId",
-            "in": "path",
-            "required": true,
-            "description": "Target market ID.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "days",
-            "in": "query",
-            "required": false,
-            "description": "History window size. Allowed range: 1..30. Default: 30.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 30,
-              "default": 30
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Funding history response",
-            "headers": {
-              "X-API-Version": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "v1"
-              },
-              "Cache-Control": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "public, max-age=0, s-maxage=600, stale-while-revalidate=60"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/HistoryRow"
-                  }
-                },
-                "example": [
-                  {
-                    "funding_time": "2026-03-04T12:00:00+00:00",
-                    "apr": 10.95
-                  },
-                  {
-                    "funding_time": "2026-03-04T08:00:00+00:00",
-                    "apr": 3.09
-                  }
-                ]
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/Problem" }
               }
             }
           }
@@ -280,133 +115,73 @@
   },
   "components": {
     "schemas": {
-      "MarketRow": {
+      "ArbitrageCollection": {
         "type": "object",
-        "description": "Market snapshot row. All `funding_rate*` fields are APR values in percent.",
+        "required": ["data", "pagination", "meta"],
         "properties": {
-          "market_id": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Market identifier."
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ArbitrageOpportunity" }
           },
-          "exchange": {
-            "type": "string",
-            "description": "Exchange name."
-          },
-          "base_asset": {
-            "type": "string",
-            "description": "Base asset ticker."
-          },
-          "quote_asset": {
-            "type": "string",
-            "description": "Quote asset ticker."
-          },
-          "open_interest": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Open interest in quote currency units."
-          },
-          "volume_24h": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "24-hour traded volume in quote currency units."
-          },
-          "funding_rate_live": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Current funding rate APR in percent."
-          },
-          "funding_rate_1d": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "1-day funding rate APR in percent."
-          },
-          "funding_rate_3d": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "3-day funding rate APR in percent."
-          },
-          "funding_rate_7d": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "7-day funding rate APR in percent."
-          },
-          "funding_rate_15d": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "15-day funding rate APR in percent."
-          },
-          "funding_rate_30d": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "30-day funding rate APR in percent."
-          }
+          "pagination": { "$ref": "#/components/schemas/Pagination" },
+          "meta": { "$ref": "#/components/schemas/ArbitrageMeta" }
         }
       },
-      "ArbitrageRow": {
+      "ArbitrageOpportunity": {
         "type": "object",
+        "required": [
+          "base_asset",
+          "apr",
+          "stability",
+          "long_market_id",
+          "short_market_id",
+          "long_exchange",
+          "short_exchange"
+        ],
         "properties": {
-          "base_asset": {
-            "type": "string",
-            "description": "Base asset symbol."
-          },
+          "base_asset": { "type": "string", "example": "BTC" },
           "apr": {
             "type": "number",
-            "description": "APR spread in percent for the selected `window`."
+            "description": "APR spread in percent for the selected window."
           },
           "stability": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Stability score for the opportunity over the selected `window`."
+            "type": ["number", "null"],
+            "description": "Stability score for the selected window."
           },
-          "long_market_id": {
-            "type": "integer",
-            "description": "Market ID for the long leg."
-          },
-          "short_market_id": {
-            "type": "integer",
-            "description": "Market ID for the short leg."
-          },
-          "long_exchange": {
-            "type": "string",
-            "description": "Exchange name for the long leg."
-          },
-          "short_exchange": {
-            "type": "string",
-            "description": "Exchange name for the short leg."
-          }
+          "long_market_id": { "type": "integer" },
+          "short_market_id": { "type": "integer" },
+          "long_exchange": { "type": "string" },
+          "short_exchange": { "type": "string" }
         }
       },
-      "HistoryRow": {
+      "Pagination": {
         "type": "object",
+        "required": ["limit", "has_more", "next_cursor"],
         "properties": {
-          "funding_time": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "apr": {
-            "type": "number"
-          }
+          "limit": { "type": "integer", "minimum": 1, "maximum": 500 },
+          "has_more": { "type": "boolean" },
+          "next_cursor": { "type": ["string", "null"] }
+        }
+      },
+      "ArbitrageMeta": {
+        "type": "object",
+        "required": ["window", "sort", "order"],
+        "properties": {
+          "window": { "type": "integer", "enum": [7, 15, 30] },
+          "sort": { "type": "string", "enum": ["apr", "stability"] },
+          "order": { "type": "string", "enum": ["asc", "desc"] }
+        }
+      },
+      "Problem": {
+        "type": "object",
+        "required": ["type", "title", "status", "detail", "code", "instance"],
+        "properties": {
+          "type": { "type": "string", "format": "uri" },
+          "title": { "type": "string" },
+          "status": { "type": "integer" },
+          "detail": { "type": "string" },
+          "code": { "type": "string" },
+          "instance": { "type": "string" }
         }
       }
     }

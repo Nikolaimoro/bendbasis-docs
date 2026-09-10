@@ -1,16 +1,15 @@
 ---
 title: "Arbitrage opportunities"
-description: "Funding arbitrage opportunities"
-openapi: "GET /api/v1/public/funding/arbitrage"
+description: "List and filter funding arbitrage opportunities"
+openapi: "GET /v1/funding/arbitrage"
 ---
 
-Use this endpoint to fetch arbitrage opportunities across markets.
+Returns a cursor-paginated collection of funding arbitrage opportunities.
 
-Use the optional `window` query parameter to select the calculation window. Supported values are `7`, `15`, and `30`. The default is `15`.
+Results are sorted by APR descending by default. Use `sort` and `order` to change the order.
 
 ```bash
-curl "https://bendbasis.com/api/v1/public/funding/arbitrage?window=7"
+curl "https://api.bendbasis.com/v1/funding/arbitrage?base_assets=BTC&window=15&limit=100&sort=stability&order=desc"
 ```
 
-Use `base_assets` to filter by asset symbols (for example: `ETH,BTC`).
-Use `exchanges` to filter by exchange keys (for example: `bybit,binance`).
+When `has_more` is `true`, pass `next_cursor` unchanged in the next request. A cursor is valid only with the same filters and sorting options used to create it.

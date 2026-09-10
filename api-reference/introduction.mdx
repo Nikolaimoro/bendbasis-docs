@@ -1,14 +1,24 @@
 ---
 title: "Introduction"
-description: "Overview of bendbasis public API"
+description: "Get started with the bendbasis API"
 ---
 
 ## Base URL
 
-`https://bendbasis.com`
+`https://api.bendbasis.com/v1`
 
-All public endpoints are available under `/api/v1/public/...`.
+The API uses JSON over HTTPS. Version `v1` is included in every endpoint path.
 
 ## Authentication
 
-Public funding endpoints do not require authentication.
+Authentication is not required during the developer preview. API keys and plan limits will be introduced before the public paid release.
+
+## Example
+
+```bash
+curl "https://api.bendbasis.com/v1/funding/arbitrage?base_assets=BTC&window=15"
+```
+
+<Note>
+The previous endpoints under `https://bendbasis.com/api/v1/public/...` remain available during the migration period. See [Legacy public API](/api-reference/legacy/public-api).
+</Note>

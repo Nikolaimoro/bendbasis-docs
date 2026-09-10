@@ -13,7 +13,7 @@
   "favicon": "/favicon.ico",
   "openapi": "/api-reference/openapi.json",
   "api": {
-    "baseUrl": "https://bendbasis.com",
+    "baseUrl": "https://api.bendbasis.com",
     "playground": {
       "mode": "show"
     }
@@ -39,6 +39,7 @@
             "group": "Overview",
             "pages": [
               "api-reference/introduction",
+              "api-reference/pagination-and-errors",
               "api-reference/rate-limits",
               "api-reference/commercial-use"
             ]
@@ -46,9 +47,13 @@
           {
             "group": "Funding",
             "pages": [
-              "api-reference/funding/markets",
-              "api-reference/funding/arbitrage",
-              "api-reference/funding/history"
+              "api-reference/funding/arbitrage"
+            ]
+          },
+          {
+            "group": "Legacy",
+            "pages": [
+              "api-reference/legacy/public-api"
             ]
           }
         ]
