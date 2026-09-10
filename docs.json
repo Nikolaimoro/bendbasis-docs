@@ -27,7 +27,6 @@
             "group": "Overview",
             "pages": [
               "api-reference/introduction",
-              "api-reference/pagination-and-errors",
               "api-reference/rate-limits",
               "api-reference/commercial-use",
               "api-reference/legacy/public-api"

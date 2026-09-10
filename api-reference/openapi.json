@@ -17,7 +17,6 @@
             "name": "market_ids",
             "in": "query",
             "required": false,
-            "description": "Market IDs. Up to 400.",
             "style": "form",
             "explode": false,
             "schema": {
@@ -32,7 +31,6 @@
             "name": "base_assets",
             "in": "query",
             "required": false,
-            "description": "Base asset symbols. Up to 100.",
             "style": "form",
             "explode": false,
             "schema": {
@@ -47,7 +45,6 @@
             "name": "exchanges",
             "in": "query",
             "required": false,
-            "description": "Exchange keys. Up to 100.",
             "style": "form",
             "explode": false,
             "schema": {
@@ -62,7 +59,6 @@
             "name": "quote_assets",
             "in": "query",
             "required": false,
-            "description": "Quote asset symbols. Up to 100.",
             "style": "form",
             "explode": false,
             "schema": {
@@ -77,21 +73,19 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Rows per page. Default: 100. Maximum: 1,000.",
             "schema": { "type": "integer", "minimum": 1, "maximum": 1000, "default": 100 }
           },
           {
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Opaque cursor returned by the previous page.",
+            "description": "Cursor returned in `next_cursor`.",
             "schema": { "type": "string" }
           },
           {
             "name": "sort",
             "in": "query",
             "required": false,
-            "description": "Primary sort field.",
             "schema": {
               "type": "string",
               "enum": ["volume", "oi", "apr_live", "apr_1d", "apr_3d", "apr_7d", "apr_15d", "apr_30d"],
@@ -112,9 +106,11 @@
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MarketCollection" } } }
           },
-          "400": { "$ref": "#/components/responses/InvalidRequest" },
-          "429": { "$ref": "#/components/responses/RateLimited" },
-          "500": { "$ref": "#/components/responses/InternalError" }
+          "400": {
+            "description": "Invalid parameter or cursor.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     },
@@ -138,13 +134,15 @@
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MarketResponse" } } }
           },
-          "400": { "$ref": "#/components/responses/InvalidRequest" },
+          "400": {
+            "description": "Invalid market ID.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+          },
           "404": {
             "description": "Market not found.",
-            "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
-          "429": { "$ref": "#/components/responses/RateLimited" },
-          "500": { "$ref": "#/components/responses/InternalError" }
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     },
@@ -152,7 +150,7 @@
       "get": {
         "summary": "History",
         "operationId": "getFundingHistory",
-        "description": "Returns raw funding observations for one market, newest first. The maximum range is 30 days.",
+        "description": "Funding history. Event range: 30 days. 1d range: 365 days.",
         "parameters": [
           {
             "name": "market_id",
@@ -163,18 +161,36 @@
             "example": 15036
           },
           {
+            "name": "resolution",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["event", "1d"], "default": "event" }
+          },
+          {
             "name": "from",
             "in": "query",
             "required": false,
-            "description": "Inclusive range start. Defaults to 30 days before `to`.",
-            "schema": { "type": "string", "format": "date-time" }
+            "description": "Inclusive start.",
+            "schema": {
+              "oneOf": [
+                { "type": "string", "format": "date-time" },
+                { "type": "string", "format": "date" },
+                { "type": "integer", "format": "int64" }
+              ]
+            }
           },
           {
             "name": "to",
             "in": "query",
             "required": false,
-            "description": "Exclusive range end. Defaults to the current time.",
-            "schema": { "type": "string", "format": "date-time" }
+            "description": "Exclusive end.",
+            "schema": {
+              "oneOf": [
+                { "type": "string", "format": "date-time" },
+                { "type": "string", "format": "date" },
+                { "type": "integer", "format": "int64" }
+              ]
+            }
           }
         ],
         "responses": {
@@ -183,13 +199,15 @@
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FundingHistoryResponse" } } }
           },
-          "400": { "$ref": "#/components/responses/InvalidRequest" },
+          "400": {
+            "description": "Invalid parameter or range.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+          },
           "404": {
             "description": "Market not found.",
-            "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
-          "429": { "$ref": "#/components/responses/RateLimited" },
-          "500": { "$ref": "#/components/responses/InternalError" }
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     },
@@ -210,7 +228,6 @@
             "name": "base_assets",
             "in": "query",
             "required": false,
-            "description": "Base asset symbols. Up to 100.",
             "style": "form",
             "explode": false,
             "schema": {
@@ -225,7 +242,7 @@
             "name": "exchanges",
             "in": "query",
             "required": false,
-            "description": "Exchange keys. Matches either leg. Up to 100.",
+            "description": "Matches either leg.",
             "style": "form",
             "explode": false,
             "schema": {
@@ -240,21 +257,19 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Rows per page. Default: 100. Maximum: 500.",
             "schema": { "type": "integer", "minimum": 1, "maximum": 500, "default": 100 }
           },
           {
             "name": "cursor",
             "in": "query",
             "required": false,
-            "description": "Opaque cursor returned by the previous page.",
+            "description": "Cursor returned in `next_cursor`.",
             "schema": { "type": "string" }
           },
           {
             "name": "sort",
             "in": "query",
             "required": false,
-            "description": "Primary sort field.",
             "schema": { "type": "string", "enum": ["apr", "stability"], "default": "apr" }
           },
           {
@@ -271,25 +286,20 @@
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ArbitrageCollection" } } }
           },
-          "400": { "$ref": "#/components/responses/InvalidRequest" },
-          "429": { "$ref": "#/components/responses/RateLimited" },
-          "500": { "$ref": "#/components/responses/InternalError" }
+          "400": {
+            "description": "Invalid parameter or cursor.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     }
   },
   "components": {
     "responses": {
-      "InvalidRequest": {
-        "description": "Invalid query parameter or incompatible cursor.",
-        "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } }
-      },
       "RateLimited": {
-        "description": "Request rate exceeded. Retry with backoff."
-      },
-      "InternalError": {
-        "description": "Internal server error.",
-        "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } }
+        "description": "Rate limit exceeded.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
       }
     },
     "schemas": {
@@ -298,7 +308,7 @@
         "required": ["data", "next_cursor"],
         "properties": {
           "data": { "type": "array", "items": { "$ref": "#/components/schemas/FundingMarket" } },
-          "next_cursor": { "type": ["string", "null"] }
+          "next_cursor": { "type": ["string", "null"], "description": "Cursor for the next page." }
         }
       },
       "MarketResponse": {
@@ -340,11 +350,16 @@
         "properties": {
           "data": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/FundingHistoryPoint" }
+            "items": {
+              "oneOf": [
+                { "$ref": "#/components/schemas/EventFundingHistoryPoint" },
+                { "$ref": "#/components/schemas/DailyFundingHistoryPoint" }
+              ]
+            }
           }
         }
       },
-      "FundingHistoryPoint": {
+      "EventFundingHistoryPoint": {
         "type": "object",
         "required": ["funding_time", "funding_rate", "funding_interval"],
         "properties": {
@@ -360,12 +375,24 @@
           }
         }
       },
+      "DailyFundingHistoryPoint": {
+        "type": "object",
+        "required": ["date", "funding_rate_sum"],
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "funding_rate_sum": {
+            "type": ["string", "null"],
+            "description": "Signed decimal funding rate summed for the UTC date.",
+            "example": "0.0003"
+          }
+        }
+      },
       "ArbitrageCollection": {
         "type": "object",
         "required": ["data", "next_cursor", "meta"],
         "properties": {
           "data": { "type": "array", "items": { "$ref": "#/components/schemas/ArbitrageOpportunity" } },
-          "next_cursor": { "type": ["string", "null"] },
+          "next_cursor": { "type": ["string", "null"], "description": "Cursor for the next page." },
           "meta": { "$ref": "#/components/schemas/ArbitrageMeta" }
         }
       },
@@ -391,16 +418,12 @@
           "order": { "type": "string", "enum": ["asc", "desc"] }
         }
       },
-      "Problem": {
+      "Error": {
         "type": "object",
-        "required": ["type", "title", "status", "detail", "code", "instance"],
+        "required": ["code", "message"],
         "properties": {
-          "type": { "type": "string", "format": "uri" },
-          "title": { "type": "string" },
-          "status": { "type": "integer" },
-          "detail": { "type": "string" },
           "code": { "type": "string" },
-          "instance": { "type": "string" }
+          "message": { "type": "string" }
         }
       }
     }
