@@ -1,15 +1,11 @@
 ---
-title: "Funding markets"
-description: "List, filter, and sort funding markets"
+title: "List markets"
+description: "List, filter, and sort markets"
 openapi: "GET /v1/funding/markets"
 ---
-
-Returns all current APR windows, open interest, and 24-hour volume for each market.
 
 Use `market_ids` to request several known markets in one call:
 
 ```bash
-curl "https://api.bendbasis.com/v1/funding/markets?market_ids=101,205,310"
+curl "https://api.bendbasis.com/v1/funding/markets?market_ids=15036,22162,125"
 ```
-
-`funding_interval` is measured in hours. Values inside `funding_rate_apr` are annualized percentages.

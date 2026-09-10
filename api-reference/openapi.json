@@ -9,7 +9,7 @@
   "paths": {
     "/v1/funding/markets": {
       "get": {
-        "summary": "List funding markets",
+        "summary": "List markets",
         "operationId": "listFundingMarkets",
         "description": "Returns a filtered, sorted, and cursor-paginated collection of funding markets.",
         "parameters": [
@@ -26,7 +26,7 @@
               "maxItems": 400,
               "uniqueItems": true
             },
-            "example": [101, 205, 310]
+            "example": [15036, 22162, 125]
           },
           {
             "name": "base_assets",
@@ -77,7 +77,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Number of rows to return.",
+            "description": "Rows per page. Default: 100. Maximum: 1,000.",
             "schema": { "type": "integer", "minimum": 1, "maximum": 1000, "default": 100 }
           },
           {
@@ -95,7 +95,7 @@
             "schema": {
               "type": "string",
               "enum": ["volume", "oi", "apr_live", "apr_1d", "apr_3d", "apr_7d", "apr_15d", "apr_30d"],
-              "default": "volume"
+              "default": "apr_live"
             }
           },
           {
@@ -120,7 +120,7 @@
     },
     "/v1/funding/markets/{market_id}": {
       "get": {
-        "summary": "Get a funding market",
+        "summary": "Market",
         "operationId": "getFundingMarket",
         "parameters": [
           {
@@ -128,7 +128,8 @@
             "in": "path",
             "required": true,
             "description": "Unique market ID.",
-            "schema": { "type": "integer", "minimum": 1 }
+            "schema": { "type": "integer", "minimum": 1 },
+            "example": 15036
           }
         ],
         "responses": {
@@ -149,7 +150,7 @@
     },
     "/v1/funding/markets/{market_id}/history": {
       "get": {
-        "summary": "Get funding history",
+        "summary": "History",
         "operationId": "getFundingHistory",
         "description": "Returns raw funding observations for one market, newest first. The maximum range is 30 days.",
         "parameters": [
@@ -158,7 +159,8 @@
             "in": "path",
             "required": true,
             "description": "Unique market ID.",
-            "schema": { "type": "integer", "minimum": 1 }
+            "schema": { "type": "integer", "minimum": 1 },
+            "example": 15036
           },
           {
             "name": "from",
@@ -193,7 +195,7 @@
     },
     "/v1/funding/arbitrage": {
       "get": {
-        "summary": "List arbitrage opportunities",
+        "summary": "Arbitrage opportunities",
         "operationId": "listFundingArbitrage",
         "description": "Returns a filtered and cursor-paginated collection of funding arbitrage opportunities.",
         "parameters": [
@@ -238,7 +240,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Number of rows to return.",
+            "description": "Rows per page. Default: 100. Maximum: 500.",
             "schema": { "type": "integer", "minimum": 1, "maximum": 500, "default": 100 }
           },
           {
@@ -308,7 +310,7 @@
         "type": "object",
         "required": ["market_id", "exchange", "symbol", "base_asset", "quote_asset", "funding_interval", "funding_rate_apr", "open_interest", "volume_24h"],
         "properties": {
-          "market_id": { "type": "integer" },
+          "market_id": { "type": "integer", "example": 15036 },
           "exchange": { "type": "string", "example": "binance" },
           "symbol": { "type": ["string", "null"], "example": "BTCUSDT" },
           "base_asset": { "type": "string", "example": "BTC" },

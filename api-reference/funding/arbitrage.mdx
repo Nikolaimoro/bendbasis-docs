@@ -4,10 +4,6 @@ description: "List and filter funding arbitrage opportunities"
 openapi: "GET /v1/funding/arbitrage"
 ---
 
-Returns a cursor-paginated collection of funding arbitrage opportunities.
-
-Results are sorted by APR descending by default. Use `sort` and `order` to change the order.
-
 ```bash
-curl "https://api.bendbasis.com/v1/funding/arbitrage?base_assets=BTC&window=15&limit=100&sort=stability&order=desc"
+curl "https://api.bendbasis.com/v1/funding/arbitrage?base_assets=BTC&window=15"
 ```

@@ -1,17 +1,11 @@
 ---
-title: "Funding history"
+title: "History"
 description: "Raw funding observations for one market"
 openapi: "GET /v1/funding/markets/{market_id}/history"
 ---
 
-Returns up to 30 days of observations, newest first. Without `from` or `to`, the endpoint returns the last 30 days.
+Returns up to 30 days of observations, newest first.
 
 ```bash
-curl "https://api.bendbasis.com/v1/funding/markets/101/history?from=2026-08-15T00%3A00%3A00Z&to=2026-09-01T00%3A00%3A00Z"
+curl "https://api.bendbasis.com/v1/funding/markets/15036/history"
 ```
-
-`from` is inclusive and `to` is exclusive. Both use RFC 3339 timestamps.
-
-<Note>
-`funding_rate` is the raw signed decimal rate for one `funding_interval`, not a percentage or APR. `funding_interval` is measured in hours.
-</Note>

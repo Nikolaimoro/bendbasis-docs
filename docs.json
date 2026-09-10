@@ -30,13 +30,7 @@
               "api-reference/pagination-and-errors",
               "api-reference/rate-limits",
               "api-reference/commercial-use",
-              {
-                "group": "Legacy",
-                "expanded": false,
-                "pages": [
-                  "api-reference/legacy/public-api"
-                ]
-              }
+              "api-reference/legacy/public-api"
             ]
           },
           {

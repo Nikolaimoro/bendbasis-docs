@@ -1,21 +1,15 @@
 ---
-title: "Limits and refresh cadence"
-description: "Request, page-size, and refresh guidance"
+title: "Limits"
+description: "Request limits and data updates"
 ---
 
-The developer preview does not publish a fixed account request quota. Automated abuse protection can still return `429 Too Many Requests`. If this happens, reduce your request rate and retry with backoff.
+Requests may return `429 Too Many Requests`. Retry with backoff.
 
-`GET /v1/funding/arbitrage` returns 100 rows by default and accepts a maximum `limit` of 500.
-
-`GET /v1/funding/markets` returns 100 rows by default and accepts a maximum `limit` of 1,000.
-
-`GET /v1/funding/markets/{market_id}/history` accepts a maximum time range of 30 days. It does not use pagination.
-
-## Refresh cadence by endpoint
+## Data updates
 
 - `GET /v1/funding/arbitrage`
-  The 7-day, 15-day, and 30-day windows are refreshed once per day (around 04:00 UTC). Polling more often does not provide fresher values.
+  Windows refresh daily around 04:00 UTC.
 - `GET /v1/funding/markets`
-  The market snapshot refreshes every five minutes. Source freshness varies by exchange.
+  Market data collection runs every minute.
 - `GET /v1/funding/markets/{market_id}/history`
-  History updates after an exchange publishes a funding payment. Timing follows each observation's `funding_interval`.
+  History updates after exchanges publish funding payments.
