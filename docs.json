@@ -45,7 +45,8 @@
             "group": "Funding",
             "pages": [
               "api-reference/funding/history",
-              "api-reference/funding/arbitrage"
+              "api-reference/funding/arbitrage",
+              "api-reference/funding/backtest"
             ]
           }
         ]

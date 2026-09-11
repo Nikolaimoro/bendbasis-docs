@@ -11,7 +11,7 @@
       "get": {
         "summary": "Assets",
         "operationId": "listAssets",
-        "description": "Returns active assets ordered by aggregate open interest across tracked markets.",
+        "description": "Returns active assets ordered by aggregate open interest.",
         "parameters": [
           {
             "name": "assets",
@@ -53,7 +53,7 @@
           },
           "400": {
             "description": "Invalid parameter.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ValidationError" } } }
           },
           "429": { "$ref": "#/components/responses/RateLimited" }
         }
@@ -63,7 +63,7 @@
       "get": {
         "summary": "Exchanges",
         "operationId": "listExchanges",
-        "description": "Returns exchanges ordered by aggregate open interest across tracked markets.",
+        "description": "Returns tracked exchanges ordered by aggregate open interest.",
         "parameters": [
           {
             "name": "type",
@@ -80,7 +80,7 @@
           },
           "400": {
             "description": "Invalid parameter.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ValidationError" } } }
           },
           "429": { "$ref": "#/components/responses/RateLimited" }
         }
@@ -90,7 +90,7 @@
       "get": {
         "summary": "List markets",
         "operationId": "listFundingMarkets",
-        "description": "Returns a filtered, sorted, and cursor-paginated collection of funding markets.",
+        "description": "Returns current data for active funding markets. Pass `next_cursor` as `cursor` to retrieve the next page.",
         "parameters": [
           {
             "name": "market_ids",
@@ -187,7 +187,7 @@
           },
           "400": {
             "description": "Invalid parameter or cursor.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ValidationError" } } }
           },
           "429": { "$ref": "#/components/responses/RateLimited" }
         }
@@ -197,6 +197,7 @@
       "get": {
         "summary": "Market",
         "operationId": "getFundingMarket",
+        "description": "Returns current data for one active funding market.",
         "parameters": [
           {
             "name": "market_id",
@@ -215,11 +216,11 @@
           },
           "400": {
             "description": "Invalid market ID.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ValidationError" } } }
           },
           "404": {
             "description": "Market not found.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/NotFoundError" } } }
           },
           "429": { "$ref": "#/components/responses/RateLimited" }
         }
@@ -227,9 +228,9 @@
     },
     "/v1/funding/markets/{market_id}/history": {
       "get": {
-        "summary": "History",
+        "summary": "Settled funding rates",
         "operationId": "getFundingHistory",
-        "description": "Funding history. Event range: 30 days. 1d range: 365 days.",
+        "description": "Returns settled funding rates at event resolution for up to 30 days, or daily aggregates for up to 365 days. Event resolution defaults to the last 7 days.",
         "parameters": [
           {
             "name": "market_id",
@@ -274,17 +275,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Funding history",
+            "description": "Settled funding rates",
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FundingHistoryResponse" } } }
           },
           "400": {
             "description": "Invalid parameter or range.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ValidationError" } } }
           },
           "404": {
             "description": "Market not found.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/NotFoundError" } } }
           },
           "429": { "$ref": "#/components/responses/RateLimited" }
         }
@@ -294,7 +295,7 @@
       "get": {
         "summary": "Arbitrage opportunities",
         "operationId": "listFundingArbitrage",
-        "description": "Returns a filtered and cursor-paginated collection of funding arbitrage opportunities.",
+        "description": "Returns cross-exchange funding arbitrage opportunities for the selected calculation window. Pass `next_cursor` as `cursor` to retrieve the next page.",
         "parameters": [
           {
             "name": "window",
@@ -367,7 +368,34 @@
           },
           "400": {
             "description": "Invalid parameter or cursor.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ValidationError" } } }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/v1/funding/arbitrage/backtest": {
+      "post": {
+        "summary": "Backtest",
+        "operationId": "runFundingArbitrageBacktest",
+        "description": "Backtests a funding arbitrage pair for up to 365 days. Dates default to the latest seven completed UTC days. Settled funding events are used for the latest 30 days and daily aggregates for earlier dates; longer ranges return daily points.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FundingBacktestRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Backtest result",
+            "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FundingBacktestResponse" } } }
+          },
+          "400": {
+            "description": "Invalid request or market pair.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ValidationError" } } }
           },
           "429": { "$ref": "#/components/responses/RateLimited" }
         }
@@ -377,8 +405,7 @@
   "components": {
     "responses": {
       "RateLimited": {
-        "description": "Rate limit exceeded.",
-        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+        "description": "Rate limit exceeded."
       }
     },
     "schemas": {
@@ -482,7 +509,7 @@
       },
       "EventFundingHistoryPoint": {
         "type": "object",
-        "required": ["funding_time", "funding_rate", "funding_interval"],
+        "required": ["funding_time", "funding_rate", "funding_interval", "mark_price"],
         "properties": {
           "funding_time": { "type": "string", "format": "date-time" },
           "funding_rate": {
@@ -493,18 +520,27 @@
           "funding_interval": {
             "type": ["integer", "null"],
             "description": "Funding interval in hours for this observation."
+          },
+          "mark_price": {
+            "type": ["string", "null"],
+            "description": "Mark price associated with the funding observation."
           }
         }
       },
       "DailyFundingHistoryPoint": {
         "type": "object",
-        "required": ["date", "funding_rate_sum"],
+        "required": ["date", "funding_rate_sum", "rate_mark_sum"],
         "properties": {
           "date": { "type": "string", "format": "date" },
           "funding_rate_sum": {
             "type": ["string", "null"],
             "description": "Signed decimal funding rate summed for the UTC date.",
             "example": "0.0003"
+          },
+          "rate_mark_sum": {
+            "type": ["string", "null"],
+            "description": "Sum of funding rate multiplied by mark price for the UTC date.",
+            "example": "33.973575"
           }
         }
       },
@@ -534,12 +570,73 @@
           "short_exchange": { "type": "string" }
         }
       },
-      "Error": {
+      "FundingBacktestRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["long_market_id", "short_market_id"],
+        "properties": {
+          "long_market_id": { "type": "integer", "minimum": 1, "example": 15036 },
+          "short_market_id": { "type": "integer", "minimum": 1, "example": 125 },
+          "from": { "type": "string", "format": "date", "description": "Inclusive start." },
+          "to": { "type": "string", "format": "date", "description": "Exclusive end." },
+          "notional_per_leg": { "type": "number", "exclusiveMinimum": 0, "maximum": 1000000000000, "default": 10000, "description": "USD notional allocated to each leg." },
+          "execution_cost_pct": { "type": "number", "minimum": 0, "maximum": 100, "default": 0.4, "description": "Total opening and closing cost as a percentage of per-leg notional." }
+        }
+      },
+      "FundingBacktestResponse": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": ["from", "to", "notional_per_leg", "execution_cost_pct", "summary", "series"],
+            "properties": {
+              "from": { "type": "string", "format": "date" },
+              "to": { "type": "string", "format": "date" },
+              "notional_per_leg": { "type": "number", "description": "USD notional allocated to each leg." },
+              "execution_cost_pct": { "type": "number", "description": "Total opening and closing cost as a percentage of per-leg notional." },
+              "summary": { "$ref": "#/components/schemas/FundingBacktestSummary" },
+              "series": { "type": "array", "items": { "$ref": "#/components/schemas/FundingBacktestPoint" } }
+            }
+          }
+        }
+      },
+      "FundingBacktestSummary": {
+        "type": "object",
+        "required": ["funding_pnl", "execution_cost", "net_pnl", "net_return_pct", "net_apr"],
+        "properties": {
+          "funding_pnl": { "type": "number", "description": "Funding PnL in USD." },
+          "execution_cost": { "type": "number", "description": "Modeled execution cost in USD." },
+          "net_pnl": { "type": "number", "description": "PnL after execution cost in USD." },
+          "net_return_pct": { "type": "number", "description": "Net return against per-leg notional, in percent." },
+          "net_apr": { "type": "number", "description": "Annualized net return in percent." }
+        }
+      },
+      "FundingBacktestPoint": {
+        "type": "object",
+        "required": ["timestamp", "funding_pnl", "execution_cost", "net_pnl", "cumulative_net_pnl"],
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "funding_pnl": { "type": "number", "description": "Funding PnL in USD." },
+          "execution_cost": { "type": "number", "description": "Modeled execution cost in USD." },
+          "net_pnl": { "type": "number", "description": "PnL after execution cost in USD." },
+          "cumulative_net_pnl": { "type": "number", "description": "Cumulative net PnL in USD." }
+        }
+      },
+      "ValidationError": {
         "type": "object",
         "required": ["code", "message"],
         "properties": {
-          "code": { "type": "string" },
-          "message": { "type": "string" }
+          "code": { "type": "string", "enum": ["VALIDATION_ERROR"], "example": "VALIDATION_ERROR" },
+          "message": { "type": "string", "example": "Invalid parameter" }
+        }
+      },
+      "NotFoundError": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string", "enum": ["NOT_FOUND"], "example": "NOT_FOUND" },
+          "message": { "type": "string", "example": "Funding market not found" }
         }
       }
     }

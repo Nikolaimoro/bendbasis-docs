@@ -1,15 +1,15 @@
 ---
-title: "Limits"
-description: "Request limits and data updates"
+title: "Rate limits"
+description: "Rate limits and data updates"
 ---
 
-Requests may return `429 Too Many Requests`. Retry with backoff.
+The API allows 60 requests per minute per client. Requests above the limit return `429 Too Many Requests`.
 
 ## Data updates
 
 - `GET /v1/funding/arbitrage`
   Windows refresh daily around 04:00 UTC.
-- `GET /v1/funding/markets`
-  Market data collection runs every minute.
+- `GET /v1/assets`, `GET /v1/exchanges`, `GET /v1/funding/markets`
+  Data refreshes about every five minutes.
 - `GET /v1/funding/markets/{market_id}/history`
   History updates after exchanges publish funding payments.

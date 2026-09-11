@@ -1,0 +1,11 @@
+---
+title: "Backtest"
+description: "Backtest a funding arbitrage pair"
+openapi: "POST /v1/funding/arbitrage/backtest"
+---
+
+```bash
+curl -X POST "https://api.bendbasis.com/v1/funding/arbitrage/backtest" \
+  -H "Content-Type: application/json" \
+  -d '{"long_market_id":15036,"short_market_id":125}'
+```
