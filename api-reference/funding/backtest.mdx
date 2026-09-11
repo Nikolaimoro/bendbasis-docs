@@ -4,7 +4,7 @@ description: "Backtest a funding arbitrage pair"
 openapi: "POST /v1/funding/arbitrage/backtest"
 ---
 
-Settled funding events are used for the latest 30 days, and daily funding aggregates are used for older dates. If the selected range includes dates older than 30 days, the entire backtest series is grouped by UTC day.
+Uses settled funding rates for the latest 30 days and daily aggregates for earlier dates.
 
 ```bash
 curl -X POST "https://api.bendbasis.com/v1/funding/arbitrage/backtest" \

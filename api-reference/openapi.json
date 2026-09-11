@@ -548,7 +548,7 @@
       "post": {
         "summary": "Backtest",
         "operationId": "runFundingArbitrageBacktest",
-        "description": "Backtests a funding arbitrage pair for up to 365 days. Dates default to the latest seven completed UTC days. Settled funding events are used for the latest 30 days, and daily funding aggregates are used for older dates. If the selected range includes dates older than 30 days, the entire backtest series is grouped by UTC day.",
+        "description": "Backtests a funding arbitrage pair for up to 365 days. Dates default to the latest seven completed UTC days. Uses settled funding rates for the latest 30 days and daily aggregates for earlier dates.",
         "requestBody": {
           "required": true,
           "content": {
