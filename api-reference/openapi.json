@@ -64,6 +64,14 @@
         "summary": "Exchanges",
         "operationId": "listExchanges",
         "description": "Returns exchanges ordered by aggregate open interest across tracked markets.",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["cex", "dex"] }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Exchange collection",
@@ -71,7 +79,7 @@
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ExchangeCollection" } } }
           },
           "400": {
-            "description": "Query parameters are not supported.",
+            "description": "Invalid parameter.",
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "429": { "$ref": "#/components/responses/RateLimited" }
