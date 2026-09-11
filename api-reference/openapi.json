@@ -502,7 +502,7 @@
             "name": "sort",
             "in": "query",
             "required": false,
-            "schema": { "type": "string", "enum": ["apr", "stability"], "default": "apr" }
+            "schema": { "type": "string", "enum": ["apr", "stability"], "default": "stability" }
           },
           {
             "name": "order",
@@ -524,24 +524,24 @@
                   "data": [
                     {
                       "base_asset": "BTC",
-                      "apr": 93.51,
-                      "stability": 0.268939,
+                      "apr": 22.36,
+                      "stability": 1,
                       "long_market_id": 124,
-                      "short_market_id": 64885436,
+                      "short_market_id": 1046429,
                       "long_exchange": "bybit",
-                      "short_exchange": "gmtrade"
+                      "short_exchange": "gmx"
                     },
                     {
                       "base_asset": "BTC",
-                      "apr": 90.86,
-                      "stability": 0.309774,
-                      "long_market_id": 15223,
-                      "short_market_id": 64885436,
-                      "long_exchange": "binance",
-                      "short_exchange": "gmtrade"
+                      "apr": 19.08,
+                      "stability": 1,
+                      "long_market_id": 125,
+                      "short_market_id": 1046429,
+                      "long_exchange": "bybit",
+                      "short_exchange": "gmx"
                     }
                   ],
-                  "next_cursor": "eyJ2IjoxLCJxIjoieF9TT2FqM2g0aUQzWHlzX2QzLXYxY2dQdzdIUEQ2SWJmOU1sVnlVNlZmWSIsInZhbHVlIjo5MC44Niwic2hvcnRfbWFya2V0X2lkIjo2NDg4NTQzNiwibG9uZ19tYXJrZXRfaWQiOjE1MjIzfQ"
+                  "next_cursor": "eyJ2IjoxLCJxIjoiXzE5aEtNSThoMEowRjJ1cVE0U3JKZG83YU55TTloNDdqX25zTE43VEo1MCIsInZhbHVlIjoxLCJzaG9ydF9tYXJrZXRfaWQiOjEwNDY0MjksImxvbmdfbWFya2V0X2lkIjoxMjV9"
                 }
               }
             }
