@@ -7,6 +7,77 @@
   },
   "servers": [{ "url": "https://api.bendbasis.com" }],
   "paths": {
+    "/v1/assets": {
+      "get": {
+        "summary": "Assets",
+        "operationId": "listAssets",
+        "description": "Returns active assets ordered by aggregate open interest across tracked markets.",
+        "parameters": [
+          {
+            "name": "assets",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" },
+              "maxItems": 100,
+              "uniqueItems": true
+            },
+            "example": ["BTC", "ETH"]
+          },
+          {
+            "name": "asset_classes",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["crypto", "equity", "etf", "index", "commodity", "fx", "tradfi", "unknown"]
+              },
+              "maxItems": 8,
+              "uniqueItems": true
+            },
+            "example": ["crypto", "equity"]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset collection",
+            "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AssetCollection" } } }
+          },
+          "400": {
+            "description": "Invalid parameter.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/v1/exchanges": {
+      "get": {
+        "summary": "Exchanges",
+        "operationId": "listExchanges",
+        "description": "Returns exchanges ordered by aggregate open interest across tracked markets.",
+        "responses": {
+          "200": {
+            "description": "Exchange collection",
+            "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ExchangeCollection" } } }
+          },
+          "400": {
+            "description": "Query parameters are not supported.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+          },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
     "/v1/funding/markets": {
       "get": {
         "summary": "List markets",
@@ -303,6 +374,48 @@
       }
     },
     "schemas": {
+      "AssetCollection": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/Asset" } }
+        }
+      },
+      "Asset": {
+        "type": "object",
+        "required": ["asset", "name", "asset_class", "market_count", "exchange_count"],
+        "properties": {
+          "asset": { "type": "string", "example": "BTC" },
+          "name": { "type": "string", "example": "Bitcoin" },
+          "asset_class": {
+            "type": "string",
+            "enum": ["crypto", "equity", "etf", "index", "commodity", "fx", "tradfi", "unknown"],
+            "example": "crypto"
+          },
+          "market_count": { "type": "integer", "minimum": 1 },
+          "exchange_count": { "type": "integer", "minimum": 1 }
+        }
+      },
+      "ExchangeCollection": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/Exchange" } }
+        }
+      },
+      "Exchange": {
+        "type": "object",
+        "required": ["exchange", "name", "type", "open_interest", "volume_24h", "market_count", "asset_count"],
+        "properties": {
+          "exchange": { "type": "string", "example": "binance" },
+          "name": { "type": "string", "example": "Binance" },
+          "type": { "type": ["string", "null"], "enum": ["cex", "dex", null], "example": "cex" },
+          "open_interest": { "type": ["number", "null"], "description": "Aggregate open interest in comparable USD or quote notional." },
+          "volume_24h": { "type": ["number", "null"], "description": "Aggregate 24-hour volume in comparable USD or quote notional." },
+          "market_count": { "type": "integer", "minimum": 1 },
+          "asset_count": { "type": "integer", "minimum": 1 }
+        }
+      },
       "MarketCollection": {
         "type": "object",
         "required": ["data", "next_cursor"],

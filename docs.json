@@ -33,10 +33,17 @@
             ]
           },
           {
-            "group": "Funding",
+            "group": "Markets",
             "pages": [
               "api-reference/funding/markets",
               "api-reference/funding/market",
+              "api-reference/markets/assets",
+              "api-reference/markets/exchanges"
+            ]
+          },
+          {
+            "group": "Funding",
+            "pages": [
               "api-reference/funding/history",
               "api-reference/funding/arbitrage"
             ]
