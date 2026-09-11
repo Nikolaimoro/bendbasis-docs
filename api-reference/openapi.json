@@ -24,8 +24,7 @@
               "items": { "type": "string" },
               "maxItems": 100,
               "uniqueItems": true
-            },
-            "example": ["BTC", "ETH"]
+            }
           },
           {
             "name": "asset_classes",
@@ -41,8 +40,7 @@
               },
               "maxItems": 8,
               "uniqueItems": true
-            },
-            "example": ["crypto", "equity"]
+            }
           }
         ],
         "responses": {
@@ -144,8 +142,7 @@
               "items": { "type": "integer", "minimum": 1 },
               "maxItems": 400,
               "uniqueItems": true
-            },
-            "example": [15036, 22162, 125]
+            }
           },
           {
             "name": "base_assets",
@@ -158,8 +155,7 @@
               "items": { "type": "string" },
               "maxItems": 100,
               "uniqueItems": true
-            },
-            "example": ["BTC", "ETH"]
+            }
           },
           {
             "name": "exchanges",
@@ -172,8 +168,7 @@
               "items": { "type": "string" },
               "maxItems": 100,
               "uniqueItems": true
-            },
-            "example": ["binance", "bybit"]
+            }
           },
           {
             "name": "quote_assets",
@@ -186,8 +181,7 @@
               "items": { "type": "string" },
               "maxItems": 100,
               "uniqueItems": true
-            },
-            "example": ["USDT", "USDC"]
+            }
           },
           {
             "name": "limit",
@@ -290,8 +284,7 @@
             "in": "path",
             "required": true,
             "description": "Unique market ID.",
-            "schema": { "type": "integer", "minimum": 1 },
-            "example": 15036
+            "schema": { "type": "integer", "minimum": 1 }
           }
         ],
         "responses": {
@@ -347,8 +340,7 @@
             "in": "path",
             "required": true,
             "description": "Unique market ID.",
-            "schema": { "type": "integer", "minimum": 1 },
-            "example": 15036
+            "schema": { "type": "integer", "minimum": 1 }
           },
           {
             "name": "resolution",
@@ -467,8 +459,7 @@
               "items": { "type": "string" },
               "maxItems": 100,
               "uniqueItems": true
-            },
-            "example": ["BTC", "ETH"]
+            }
           },
           {
             "name": "exchanges",
@@ -482,8 +473,7 @@
               "items": { "type": "string" },
               "maxItems": 100,
               "uniqueItems": true
-            },
-            "example": ["binance", "bybit"]
+            }
           },
           {
             "name": "limit",
@@ -650,12 +640,11 @@
         "type": "object",
         "required": ["asset", "name", "asset_class", "market_count", "exchange_count"],
         "properties": {
-          "asset": { "type": "string", "example": "BTC" },
-          "name": { "type": "string", "example": "Bitcoin" },
+          "asset": { "type": "string" },
+          "name": { "type": "string" },
           "asset_class": {
             "type": "string",
-            "enum": ["crypto", "equity", "etf", "index", "commodity", "fx", "tradfi", "unknown"],
-            "example": "crypto"
+            "enum": ["crypto", "equity", "etf", "index", "commodity", "fx", "tradfi", "unknown"]
           },
           "market_count": { "type": "integer", "minimum": 1 },
           "exchange_count": { "type": "integer", "minimum": 1 }
@@ -672,9 +661,9 @@
         "type": "object",
         "required": ["exchange", "name", "type", "open_interest", "volume_24h", "market_count", "asset_count"],
         "properties": {
-          "exchange": { "type": "string", "example": "binance" },
-          "name": { "type": "string", "example": "Binance" },
-          "type": { "type": ["string", "null"], "enum": ["cex", "dex", null], "example": "cex" },
+          "exchange": { "type": "string" },
+          "name": { "type": "string" },
+          "type": { "type": ["string", "null"], "enum": ["cex", "dex", null] },
           "open_interest": { "type": ["number", "null"], "description": "Aggregate open interest in comparable USD or quote notional." },
           "volume_24h": { "type": ["number", "null"], "description": "Aggregate 24-hour volume in comparable USD or quote notional." },
           "market_count": { "type": "integer", "minimum": 1 },
@@ -698,11 +687,11 @@
         "type": "object",
         "required": ["market_id", "exchange", "symbol", "base_asset", "quote_asset", "funding_interval", "funding_rate_apr", "open_interest", "volume_24h"],
         "properties": {
-          "market_id": { "type": "integer", "example": 15036 },
-          "exchange": { "type": "string", "example": "binance" },
-          "symbol": { "type": ["string", "null"], "example": "BTCUSDT" },
-          "base_asset": { "type": "string", "example": "BTC" },
-          "quote_asset": { "type": "string", "example": "USDT" },
+          "market_id": { "type": "integer" },
+          "exchange": { "type": "string" },
+          "symbol": { "type": ["string", "null"] },
+          "base_asset": { "type": "string" },
+          "quote_asset": { "type": "string" },
           "funding_interval": { "type": ["integer", "null"], "description": "Funding interval in hours." },
           "funding_rate_apr": { "$ref": "#/components/schemas/FundingRateApr" },
           "open_interest": { "type": ["number", "null"], "description": "Current open interest in comparable USD or quote notional." },
@@ -744,16 +733,15 @@
           "funding_time": { "type": "string", "format": "date-time" },
           "funding_rate": {
             "type": ["string", "null"],
-            "description": "Signed decimal funding rate for one funding interval. This is not a percentage or APR.",
-            "example": "0.0001"
+            "description": "Settled funding rate as a decimal."
           },
           "funding_interval": {
             "type": ["integer", "null"],
-            "description": "Funding interval in hours for this observation."
+            "description": "Funding interval in hours."
           },
           "mark_price": {
             "type": ["string", "null"],
-            "description": "Mark price associated with the funding observation."
+            "description": "Mark price."
           }
         }
       },
@@ -764,13 +752,11 @@
           "date": { "type": "string", "format": "date" },
           "funding_rate_sum": {
             "type": ["string", "null"],
-            "description": "Signed decimal funding rate summed for the UTC date.",
-            "example": "0.0003"
+            "description": "Sum of settled funding rates for the UTC date."
           },
           "rate_mark_sum": {
             "type": ["string", "null"],
-            "description": "Sum of funding rate multiplied by mark price for the UTC date.",
-            "example": "33.973575"
+            "description": "Sum of settled funding rate × mark price for the UTC date."
           }
         }
       },
@@ -791,7 +777,7 @@
         "type": "object",
         "required": ["base_asset", "apr", "stability", "long_market_id", "short_market_id", "long_exchange", "short_exchange"],
         "properties": {
-          "base_asset": { "type": "string", "example": "BTC" },
+          "base_asset": { "type": "string" },
           "apr": { "type": "number", "description": "APR spread in percent for the selected window." },
           "stability": { "type": ["number", "null"], "description": "Score from 0 to 1. Higher values indicate a more consistently sustained spread." },
           "long_market_id": { "type": "integer" },
@@ -805,8 +791,8 @@
         "additionalProperties": false,
         "required": ["long_market_id", "short_market_id"],
         "properties": {
-          "long_market_id": { "type": "integer", "minimum": 1, "example": 15036 },
-          "short_market_id": { "type": "integer", "minimum": 1, "example": 125 },
+          "long_market_id": { "type": "integer", "minimum": 1 },
+          "short_market_id": { "type": "integer", "minimum": 1 },
           "from": { "type": "string", "format": "date", "description": "Inclusive start." },
           "to": { "type": "string", "format": "date", "description": "Exclusive end." },
           "notional_per_leg": { "type": "number", "exclusiveMinimum": 0, "maximum": 1000000000000, "default": 10000, "description": "USD notional allocated to each leg." },
@@ -857,17 +843,19 @@
         "type": "object",
         "required": ["code", "message"],
         "properties": {
-          "code": { "type": "string", "enum": ["VALIDATION_ERROR"], "example": "VALIDATION_ERROR" },
-          "message": { "type": "string", "example": "Invalid parameter" }
-        }
+          "code": { "type": "string", "enum": ["VALIDATION_ERROR"] },
+          "message": { "type": "string" }
+        },
+        "example": { "code": "VALIDATION_ERROR", "message": "Invalid parameter" }
       },
       "NotFoundError": {
         "type": "object",
         "required": ["code", "message"],
         "properties": {
-          "code": { "type": "string", "enum": ["NOT_FOUND"], "example": "NOT_FOUND" },
-          "message": { "type": "string", "example": "Funding market not found" }
-        }
+          "code": { "type": "string", "enum": ["NOT_FOUND"] },
+          "message": { "type": "string" }
+        },
+        "example": { "code": "NOT_FOUND", "message": "Funding market not found" }
       }
     }
   }
