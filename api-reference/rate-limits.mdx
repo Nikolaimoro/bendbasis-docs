@@ -9,7 +9,7 @@ The API allows 60 requests per minute per client. Requests above the limit retur
 
 - `GET /v1/funding/arbitrage`
   Windows refresh daily around 04:00 UTC.
-- `GET /v1/assets`, `GET /v1/exchanges`, `GET /v1/funding/markets`
+- `GET /v1/assets`, `GET /v1/exchanges`, `GET /v1/markets`
   Data refreshes about every five minutes.
-- `GET /v1/funding/markets/{market_id}/history`
+- `GET /v1/funding/history/{market_id}`
   History updates after exchanges publish funding payments.

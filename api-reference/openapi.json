@@ -49,7 +49,22 @@
           "200": {
             "description": "Asset collection",
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AssetCollection" } } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AssetCollection" },
+                "example": {
+                  "data": [
+                    {
+                      "asset": "BTC",
+                      "name": "Bitcoin",
+                      "asset_class": "crypto",
+                      "market_count": 57,
+                      "exchange_count": 36
+                    }
+                  ]
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid parameter.",
@@ -76,7 +91,33 @@
           "200": {
             "description": "Exchange collection",
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ExchangeCollection" } } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExchangeCollection" },
+                "example": {
+                  "data": [
+                    {
+                      "exchange": "binance",
+                      "name": "Binance",
+                      "type": "cex",
+                      "open_interest": 29570584308.534916,
+                      "volume_24h": 60637089455.30387,
+                      "market_count": 759,
+                      "asset_count": 718
+                    },
+                    {
+                      "exchange": "bybit",
+                      "name": "Bybit",
+                      "type": "cex",
+                      "open_interest": 11272545810.66,
+                      "volume_24h": 13057572567.1063,
+                      "market_count": 829,
+                      "asset_count": 760
+                    }
+                  ]
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid parameter.",
@@ -86,10 +127,10 @@
         }
       }
     },
-    "/v1/funding/markets": {
+    "/v1/markets": {
       "get": {
         "summary": "List markets",
-        "operationId": "listFundingMarkets",
+        "operationId": "listMarkets",
         "description": "Returns current data for active funding markets. Pass `next_cursor` as `cursor` to retrieve the next page.",
         "parameters": [
           {
@@ -183,7 +224,52 @@
           "200": {
             "description": "Funding market collection",
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MarketCollection" } } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MarketCollection" },
+                "example": {
+                  "data": [
+                    {
+                      "market_id": 125,
+                      "exchange": "bybit",
+                      "symbol": "BTCUSDT",
+                      "base_asset": "BTC",
+                      "quote_asset": "USDT",
+                      "funding_interval": 8,
+                      "funding_rate_apr": {
+                        "live": 4.63,
+                        "1d": 5.38,
+                        "3d": 5.58,
+                        "7d": 3.95,
+                        "15d": 5.22,
+                        "30d": 5.59
+                      },
+                      "open_interest": 4348681438.07,
+                      "volume_24h": 4358578092.2924
+                    },
+                    {
+                      "market_id": 15223,
+                      "exchange": "binance",
+                      "symbol": "BTCUSDC",
+                      "base_asset": "BTC",
+                      "quote_asset": "USDC",
+                      "funding_interval": 8,
+                      "funding_rate_apr": {
+                        "live": 4.54,
+                        "1d": 6.43,
+                        "3d": 6.23,
+                        "7d": 2.86,
+                        "15d": 4.64,
+                        "30d": 6.16
+                      },
+                      "open_interest": 1421876495.73,
+                      "volume_24h": 2773804519.9
+                    }
+                  ],
+                  "next_cursor": "eyJ2IjoxLCJxIjoiUzZSVmx5SEh3dXpWdzJVOTJBdFR5UHdxb2l2cDJvQ2Rlc0k3Q3BnOTIxOCIsInZhbHVlIjo0LjU0LCJtYXJrZXRfaWQiOjE1MjIzfQ"
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid parameter or cursor.",
@@ -193,10 +279,10 @@
         }
       }
     },
-    "/v1/funding/markets/{market_id}": {
+    "/v1/markets/{market_id}": {
       "get": {
         "summary": "Market",
-        "operationId": "getFundingMarket",
+        "operationId": "getMarket",
         "description": "Returns current data for one active funding market.",
         "parameters": [
           {
@@ -212,7 +298,31 @@
           "200": {
             "description": "Funding market",
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MarketResponse" } } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MarketResponse" },
+                "example": {
+                  "data": {
+                    "market_id": 15036,
+                    "exchange": "binance",
+                    "symbol": "BTCUSDT",
+                    "base_asset": "BTC",
+                    "quote_asset": "USDT",
+                    "funding_interval": 8,
+                    "funding_rate_apr": {
+                      "live": 2.83,
+                      "1d": 5.96,
+                      "3d": 6.75,
+                      "7d": 5.44,
+                      "15d": 7.17,
+                      "30d": 7.53
+                    },
+                    "open_interest": 8214551820.078431,
+                    "volume_24h": 10213075002.28
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid market ID.",
@@ -226,7 +336,7 @@
         }
       }
     },
-    "/v1/funding/markets/{market_id}/history": {
+    "/v1/funding/history/{market_id}": {
       "get": {
         "summary": "Settled funding rates",
         "operationId": "getFundingHistory",
@@ -277,7 +387,49 @@
           "200": {
             "description": "Settled funding rates",
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FundingHistoryResponse" } } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FundingHistoryResponse" },
+                "examples": {
+                  "event": {
+                    "summary": "Settled events",
+                    "value": {
+                      "data": [
+                        {
+                          "funding_time": "2026-09-09T16:00:00+00:00",
+                          "funding_rate": "0.00004815",
+                          "funding_interval": 8,
+                          "mark_price": "78569.9"
+                        },
+                        {
+                          "funding_time": "2026-09-09T08:00:00+00:00",
+                          "funding_rate": "0.00009012",
+                          "funding_interval": 8,
+                          "mark_price": "79246.63936957"
+                        }
+                      ]
+                    }
+                  },
+                  "daily": {
+                    "summary": "Daily aggregates",
+                    "value": {
+                      "data": [
+                        {
+                          "date": "2026-09-02",
+                          "funding_rate_sum": "0.0001981200",
+                          "rate_mark_sum": "15.3326299624"
+                        },
+                        {
+                          "date": "2026-09-01",
+                          "funding_rate_sum": "0.0002232600",
+                          "rate_mark_sum": "17.5163647768"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid parameter or range.",
@@ -364,7 +516,35 @@
           "200": {
             "description": "Arbitrage collection",
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ArbitrageCollection" } } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ArbitrageCollection" },
+                "example": {
+                  "timestamp": "2026-09-11T03:52:48.836Z",
+                  "data": [
+                    {
+                      "base_asset": "BTC",
+                      "apr": 93.51,
+                      "stability": 0.268939,
+                      "long_market_id": 124,
+                      "short_market_id": 64885436,
+                      "long_exchange": "bybit",
+                      "short_exchange": "gmtrade"
+                    },
+                    {
+                      "base_asset": "BTC",
+                      "apr": 90.86,
+                      "stability": 0.309774,
+                      "long_market_id": 15223,
+                      "short_market_id": 64885436,
+                      "long_exchange": "binance",
+                      "short_exchange": "gmtrade"
+                    }
+                  ],
+                  "next_cursor": "eyJ2IjoxLCJxIjoieF9TT2FqM2g0aUQzWHlzX2QzLXYxY2dQdzdIUEQ2SWJmOU1sVnlVNlZmWSIsInZhbHVlIjo5MC44Niwic2hvcnRfbWFya2V0X2lkIjo2NDg4NTQzNiwibG9uZ19tYXJrZXRfaWQiOjE1MjIzfQ"
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid parameter or cursor.",
@@ -383,7 +563,15 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/FundingBacktestRequest" }
+              "schema": { "$ref": "#/components/schemas/FundingBacktestRequest" },
+              "example": {
+                "long_market_id": 15036,
+                "short_market_id": 125,
+                "from": "2026-09-01",
+                "to": "2026-09-02",
+                "notional_per_leg": 10000,
+                "execution_cost_pct": 0.4
+              }
             }
           }
         },
@@ -391,7 +579,49 @@
           "200": {
             "description": "Backtest result",
             "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FundingBacktestResponse" } } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FundingBacktestResponse" },
+                "example": {
+                  "data": {
+                    "from": "2026-09-01",
+                    "to": "2026-09-02",
+                    "notional_per_leg": 10000,
+                    "execution_cost_pct": 0.4,
+                    "summary": {
+                      "funding_pnl": -0.7729115921,
+                      "execution_cost": 40,
+                      "net_pnl": -40.7729115921,
+                      "net_return_pct": -0.4077291159,
+                      "net_apr": -148.8211273112
+                    },
+                    "series": [
+                      {
+                        "timestamp": "2026-09-01T00:00:00.000Z",
+                        "funding_pnl": -0.6303,
+                        "execution_cost": 20,
+                        "net_pnl": -20.6303,
+                        "cumulative_net_pnl": -20.6303
+                      },
+                      {
+                        "timestamp": "2026-09-01T08:00:00.000Z",
+                        "funding_pnl": 0,
+                        "execution_cost": 0,
+                        "net_pnl": 0,
+                        "cumulative_net_pnl": -20.6303
+                      },
+                      {
+                        "timestamp": "2026-09-01T16:00:00.000Z",
+                        "funding_pnl": -0.1426115921,
+                        "execution_cost": 20,
+                        "net_pnl": -20.1426115921,
+                        "cumulative_net_pnl": -40.7729115921
+                      }
+                    ]
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid request or market pair.",
