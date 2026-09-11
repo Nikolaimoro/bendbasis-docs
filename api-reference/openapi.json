@@ -502,11 +502,15 @@
       },
       "ArbitrageCollection": {
         "type": "object",
-        "required": ["data", "next_cursor", "meta"],
+        "required": ["timestamp", "data", "next_cursor"],
         "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Time the arbitrage snapshot was last updated."
+          },
           "data": { "type": "array", "items": { "$ref": "#/components/schemas/ArbitrageOpportunity" } },
-          "next_cursor": { "type": ["string", "null"], "description": "Cursor for the next page." },
-          "meta": { "$ref": "#/components/schemas/ArbitrageMeta" }
+          "next_cursor": { "type": ["string", "null"], "description": "Cursor for the next page." }
         }
       },
       "ArbitrageOpportunity": {
@@ -520,15 +524,6 @@
           "short_market_id": { "type": "integer" },
           "long_exchange": { "type": "string" },
           "short_exchange": { "type": "string" }
-        }
-      },
-      "ArbitrageMeta": {
-        "type": "object",
-        "required": ["window", "sort", "order"],
-        "properties": {
-          "window": { "type": "integer", "enum": [7, 15, 30] },
-          "sort": { "type": "string", "enum": ["apr", "stability"] },
-          "order": { "type": "string", "enum": ["asc", "desc"] }
         }
       },
       "Error": {
