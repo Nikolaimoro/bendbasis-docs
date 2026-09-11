@@ -733,7 +733,7 @@
           "funding_time": { "type": "string", "format": "date-time" },
           "funding_rate": {
             "type": ["string", "null"],
-            "description": "Settled funding rate as a decimal."
+            "description": "Settled funding rate for the funding interval."
           },
           "funding_interval": {
             "type": ["integer", "null"],
