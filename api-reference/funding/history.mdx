@@ -1,8 +1,10 @@
 ---
 title: "History"
-description: "Settled funding events for up to 30 days, or daily aggregates for up to 365 days"
+description: "Funding history for one market"
 openapi: "GET /v1/funding/history/{market_id}"
 ---
+
+Settled funding events are available for up to 30 days. Daily aggregates are available for up to 365 days.
 
 ```bash
 curl "https://api.bendbasis.com/v1/funding/history/15036?resolution=1d"
