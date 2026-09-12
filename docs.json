@@ -28,8 +28,7 @@
             "pages": [
               "api-reference/introduction",
               "api-reference/rate-limits",
-              "api-reference/commercial-use",
-              "api-reference/legacy/public-api"
+              "api-reference/commercial-use"
             ]
           },
           {
