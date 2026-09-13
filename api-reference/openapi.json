@@ -673,6 +673,7 @@
             "name": "statuses",
             "in": "query",
             "required": false,
+            "description": "Filter by status. Omit to return open and closed positions.",
             "style": "form",
             "explode": false,
             "schema": {
@@ -685,7 +686,7 @@
             "name": "include",
             "in": "query",
             "required": false,
-            "description": "Set to performance to include lifetime performance in each position. The page limit must not exceed 100.",
+            "description": "Include lifetime performance. Maximum page size: 100.",
             "schema": { "type": "string", "enum": ["performance"] }
           },
           {
@@ -698,6 +699,7 @@
             "name": "cursor",
             "in": "query",
             "required": false,
+            "description": "Value returned in next_cursor.",
             "schema": { "type": "string" }
           }
         ],
@@ -810,7 +812,6 @@
         "tags": ["Portfolio"],
         "summary": "Portfolio performance",
         "operationId": "getPortfolioPerformance",
-        "description": "Returns daily values for an inclusive UTC date range. Defaults to the latest 7 days and supports up to 366 days.",
         "security": [{ "BearerAuth": [] }],
         "parameters": [
           {
@@ -823,12 +824,14 @@
             "name": "from",
             "in": "query",
             "required": false,
+            "description": "Inclusive UTC start date. Defaults to 6 days before to.",
             "schema": { "type": "string", "format": "date" }
           },
           {
             "name": "to",
             "in": "query",
             "required": false,
+            "description": "Inclusive UTC end date. Defaults to today.",
             "schema": { "type": "string", "format": "date" }
           }
         ],
@@ -1265,10 +1268,9 @@
         "type": "object",
         "additionalProperties": false,
         "required": ["calculated", "override"],
-        "description": "Lifetime accrued funding in USD. When override is present, it replaces calculated funding in performance totals.",
         "properties": {
-          "calculated": { "type": ["number", "null"] },
-          "override": { "type": ["number", "null"] }
+          "calculated": { "type": ["number", "null"], "description": "Automatically calculated lifetime funding in USD." },
+          "override": { "type": ["number", "null"], "description": "Manual lifetime funding in USD. Replaces calculated funding in performance totals when set." }
         }
       },
       "PortfolioPerformanceResponse": {
@@ -1305,7 +1307,7 @@
           "funding_pnl": { "type": "number", "description": "Funding PnL in USD." },
           "fees_paid": { "type": "number", "description": "Fees paid in USD." },
           "spread_pnl": { "type": "number", "description": "Spread PnL in USD." },
-          "net_pnl": { "type": "number", "description": "Net PnL in USD." }
+          "net_pnl": { "type": "number", "description": "Funding plus spread PnL, minus fees, in USD." }
         }
       },
       "DailyPerformance": {
@@ -1317,7 +1319,7 @@
           "funding_pnl": { "type": "number", "description": "Funding PnL in USD." },
           "fees_paid": { "type": "number", "description": "Fees paid in USD." },
           "spread_pnl": { "type": "number", "description": "Spread PnL in USD." },
-          "net_pnl": { "type": "number", "description": "Net PnL in USD." }
+          "net_pnl": { "type": "number", "description": "Funding plus spread PnL, minus fees, in USD." }
         }
       },
       "PositionPerformanceResponse": {
@@ -1354,7 +1356,7 @@
               "unrealized": { "type": "number", "description": "Estimated spread PnL in USD for the active quantity. Zero for a closed position." }
             }
           },
-          "net_pnl": { "type": ["number", "null"], "description": "Net PnL in USD after paid and estimated exit fees." },
+          "net_pnl": { "type": ["number", "null"], "description": "Funding plus realized and estimated spread PnL, minus paid and estimated exit fees, in USD." },
           "duration_days": { "type": "number", "description": "Position duration in days." },
           "apr": { "type": ["number", "null"], "description": "Annualized return in percent." },
           "calculated_at": { "type": "string", "format": "date-time" }
@@ -1385,7 +1387,7 @@
               "unrealized": { "type": "number", "description": "Estimated spread PnL in USD for the active quantity. Zero for a closed position." }
             }
           },
-          "net_pnl": { "type": ["number", "null"], "description": "Net PnL in USD after paid and estimated exit fees." },
+          "net_pnl": { "type": ["number", "null"], "description": "Funding plus realized and estimated spread PnL, minus paid and estimated exit fees, in USD." },
           "duration_days": { "type": "number", "description": "Position duration in days." },
           "apr": { "type": ["number", "null"], "description": "Annualized return in percent." },
           "calculated_at": { "type": "string", "format": "date-time" }

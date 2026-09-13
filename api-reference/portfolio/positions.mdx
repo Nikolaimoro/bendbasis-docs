@@ -4,12 +4,6 @@ description: "List positions in a portfolio"
 openapi: "GET /v1/portfolios/{portfolio_id}/positions"
 ---
 
-Use `statuses` to include only `open` or `closed` positions. Deleted positions are not available. Pass `next_cursor` as `cursor` to retrieve the next page.
-
-Legs include current quantity, entry price, leverage, and the latest available mark price so open positions can be monitored without loading each position separately.
-
-Set `include=performance` to include lifetime performance for every returned position. This expansion supports up to 100 positions per page.
-
 ```bash
 curl "https://api.bendbasis.com/v1/portfolios/PORTFOLIO_ID/positions?statuses=open&include=performance" \
   -H "Authorization: Bearer $BENDBASIS_API_KEY"
