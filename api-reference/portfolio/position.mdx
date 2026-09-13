@@ -4,7 +4,7 @@ description: "Get a position and its legs"
 openapi: "GET /v1/positions/{position_id}"
 ---
 
-`quantity` is the current leg size after adjustments. `opening_quantity` preserves the original size.
+Each leg includes its current quantity and latest available mark price. `funding.calculated` is the automatically accrued amount; when `funding.override` is present, it replaces the calculated amount in performance totals.
 
 ```bash
 curl "https://api.bendbasis.com/v1/positions/POSITION_ID" \

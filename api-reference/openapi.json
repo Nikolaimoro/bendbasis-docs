@@ -710,8 +710,8 @@
                       "opened_at": "2026-09-01T08:00:00.000Z",
                       "closed_at": null,
                       "legs": [
-                        { "side": "long", "market_id": 15036, "exchange": "binance", "symbol": "BTCUSDT" },
-                        { "side": "short", "market_id": 125, "exchange": "bybit", "symbol": "BTCUSDT" }
+                        { "side": "long", "market_id": 15036, "exchange": "binance", "symbol": "BTCUSDT", "leverage": 2, "quantity": 0.1, "open_price": 108000, "mark_price": 108240.5, "mark_price_updated_at": "2026-09-13T11:59:57.000Z" },
+                        { "side": "short", "market_id": 125, "exchange": "bybit", "symbol": "BTCUSDT", "leverage": 2, "quantity": 0.1, "open_price": 108015, "mark_price": 108255.2, "mark_price_updated_at": "2026-09-13T11:59:54.000Z" }
                       ]
                     }
                   ],
@@ -766,13 +766,14 @@
                         "exchange": "binance",
                         "symbol": "BTCUSDT",
                         "leverage": 2,
-                        "opening_quantity": 0.1,
                         "quantity": 0.1,
                         "open_price": 108000,
+                        "mark_price": 108240.5,
+                        "mark_price_updated_at": "2026-09-13T11:59:57.000Z",
                         "close_price": null,
                         "open_fee_paid": 4.32,
                         "close_fee_paid": null,
-                        "funding_pnl_override": null
+                        "funding": { "calculated": 18.42, "override": null }
                       }
                     ]
                   }
@@ -869,7 +870,7 @@
                   "data": {
                     "position_id": "de3e7930-4762-4b6d-80f0-13aa8a66ecfa",
                     "portfolio_id": "2f69612d-3b97-4820-babc-6c482a70fb68",
-                    "valuation": "mark_to_market",
+                    "status": "open",
                     "funding_pnl": 42.5,
                     "fees": { "paid": 8.4, "estimated_exit": 8.4 },
                     "spread_pnl": { "realized": 0, "unrealized": 12.1 },
@@ -1210,18 +1211,23 @@
       "PositionLegSummary": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["side", "market_id", "exchange", "symbol"],
+        "required": ["side", "market_id", "exchange", "symbol", "leverage", "quantity", "open_price", "mark_price", "mark_price_updated_at"],
         "properties": {
           "side": { "type": "string", "enum": ["long", "short"] },
           "market_id": { "type": ["integer", "null"] },
           "exchange": { "type": "string" },
-          "symbol": { "type": "string" }
+          "symbol": { "type": "string" },
+          "leverage": { "type": ["number", "null"] },
+          "quantity": { "type": "number", "description": "Current quantity after size adjustments. Zero for a closed position." },
+          "open_price": { "type": ["number", "null"] },
+          "mark_price": { "type": ["number", "null"], "description": "Latest available mark price for an open position." },
+          "mark_price_updated_at": { "type": ["string", "null"], "format": "date-time", "description": "Time the mark price was last updated." }
         }
       },
       "PositionLeg": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["leg_id", "side", "market_id", "exchange", "symbol", "leverage", "opening_quantity", "quantity", "open_price", "close_price", "open_fee_paid", "close_fee_paid", "funding_pnl_override"],
+        "required": ["leg_id", "side", "market_id", "exchange", "symbol", "leverage", "quantity", "open_price", "mark_price", "mark_price_updated_at", "close_price", "open_fee_paid", "close_fee_paid", "funding"],
         "properties": {
           "leg_id": { "type": "string", "format": "uuid" },
           "side": { "type": "string", "enum": ["long", "short"] },
@@ -1229,13 +1235,24 @@
           "exchange": { "type": "string" },
           "symbol": { "type": "string" },
           "leverage": { "type": ["number", "null"] },
-          "opening_quantity": { "type": ["number", "null"], "description": "Quantity recorded when the position opened." },
           "quantity": { "type": "number", "description": "Current quantity after size adjustments. Zero for a closed position." },
           "open_price": { "type": ["number", "null"] },
+          "mark_price": { "type": ["number", "null"], "description": "Latest available mark price for an open position." },
+          "mark_price_updated_at": { "type": ["string", "null"], "format": "date-time", "description": "Time the mark price was last updated." },
           "close_price": { "type": ["number", "null"] },
           "open_fee_paid": { "type": ["number", "null"] },
           "close_fee_paid": { "type": ["number", "null"] },
-          "funding_pnl_override": { "type": ["number", "null"], "description": "User-provided lifetime funding PnL override for this leg." }
+          "funding": { "$ref": "#/components/schemas/LegFunding" }
+        }
+      },
+      "LegFunding": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["calculated", "override"],
+        "description": "Lifetime accrued funding in USD. When override is present, it replaces calculated funding in performance totals.",
+        "properties": {
+          "calculated": { "type": ["number", "null"] },
+          "override": { "type": ["number", "null"] }
         }
       },
       "PortfolioPerformanceResponse": {
@@ -1297,11 +1314,11 @@
       "PositionPerformance": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["position_id", "portfolio_id", "valuation", "funding_pnl", "fees", "spread_pnl", "net_pnl", "duration_days", "apr", "data_complete", "calculated_at"],
+        "required": ["position_id", "portfolio_id", "status", "funding_pnl", "fees", "spread_pnl", "net_pnl", "duration_days", "apr", "data_complete", "calculated_at"],
         "properties": {
           "position_id": { "type": "string", "format": "uuid" },
           "portfolio_id": { "type": "string", "format": "uuid" },
-          "valuation": { "type": "string", "enum": ["mark_to_market", "realized"] },
+          "status": { "$ref": "#/components/schemas/PositionStatus" },
           "funding_pnl": { "type": "number", "description": "Funding PnL in USD." },
           "fees": {
             "type": "object",
