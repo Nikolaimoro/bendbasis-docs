@@ -4,6 +4,8 @@ description: "Get a position and its legs"
 openapi: "GET /v1/positions/{position_id}"
 ---
 
+`quantity` is the current leg size after adjustments. `opening_quantity` preserves the original size.
+
 ```bash
 curl "https://api.bendbasis.com/v1/positions/POSITION_ID" \
   -H "Authorization: Bearer $BENDBASIS_API_KEY"

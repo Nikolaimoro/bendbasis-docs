@@ -6,6 +6,8 @@ openapi: "GET /v1/positions/{position_id}/performance"
 
 Open positions use current mark-to-market spread and an estimated exit fee. Closed positions contain realized values.
 
+`net_pnl` equals funding PnL plus realized and unrealized spread PnL, minus paid and estimated exit fees.
+
 ```bash
 curl "https://api.bendbasis.com/v1/positions/POSITION_ID/performance" \
   -H "Authorization: Bearer $BENDBASIS_API_KEY"

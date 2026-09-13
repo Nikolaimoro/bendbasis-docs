@@ -6,6 +6,8 @@ openapi: "GET /v1/portfolios/{portfolio_id}/performance"
 
 `from` and `to` are inclusive UTC dates. The default range is the latest 7 days.
 
+All performance values are in USD. `net_pnl` equals funding PnL plus spread PnL, minus paid fees.
+
 ```bash
 curl "https://api.bendbasis.com/v1/portfolios/PORTFOLIO_ID/performance?from=2026-09-01&to=2026-09-13" \
   -H "Authorization: Bearer $BENDBASIS_API_KEY"

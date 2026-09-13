@@ -1,0 +1,22 @@
+---
+title: "Authentication"
+description: "Authenticate private API requests"
+---
+
+Portfolio endpoints require a personal API key with read-only access. Create and revoke keys from [API keys](https://bendbasis.com/account/api-keys).
+
+A key can access only portfolio data owned by the account that created it.
+
+Send the key in the `Authorization` header:
+
+```http
+Authorization: Bearer bb_api_...
+```
+
+<Warning>
+Copy a new key when it is created. It cannot be shown again.
+</Warning>
+
+Store keys in a secret manager or server environment variable. Do not put them in browser code, URLs, or source control.
+
+Missing, invalid, or revoked keys return `401 Unauthorized`.

@@ -6,6 +6,9 @@
     "version": "1.0.0-preview"
   },
   "servers": [{ "url": "https://api.bendbasis.com" }],
+  "tags": [
+    { "name": "Portfolio", "description": "Read-only access to your portfolios and positions." }
+  ],
   "paths": {
     "/v1/assets": {
       "get": {
@@ -623,6 +626,7 @@
     },
     "/v1/portfolios": {
       "get": {
+        "tags": ["Portfolio"],
         "summary": "List portfolios",
         "operationId": "listPortfolios",
         "security": [{ "BearerAuth": [] }],
@@ -654,6 +658,7 @@
     },
     "/v1/portfolios/{portfolio_id}/positions": {
       "get": {
+        "tags": ["Portfolio"],
         "summary": "List positions",
         "operationId": "listPortfolioPositions",
         "security": [{ "BearerAuth": [] }],
@@ -725,6 +730,7 @@
     },
     "/v1/positions/{position_id}": {
       "get": {
+        "tags": ["Portfolio"],
         "summary": "Get position",
         "operationId": "getPosition",
         "security": [{ "BearerAuth": [] }],
@@ -760,12 +766,13 @@
                         "exchange": "binance",
                         "symbol": "BTCUSDT",
                         "leverage": 2,
+                        "opening_quantity": 0.1,
                         "quantity": 0.1,
                         "open_price": 108000,
                         "close_price": null,
                         "open_fee_paid": 4.32,
                         "close_fee_paid": null,
-                        "funding_accrued_manual": null
+                        "funding_pnl_override": null
                       }
                     ]
                   }
@@ -783,6 +790,7 @@
     },
     "/v1/portfolios/{portfolio_id}/performance": {
       "get": {
+        "tags": ["Portfolio"],
         "summary": "Portfolio performance",
         "operationId": "getPortfolioPerformance",
         "description": "Returns daily values for an inclusive UTC date range. Defaults to the latest 7 days and supports up to 366 days.",
@@ -818,10 +826,10 @@
                   "data": {
                     "portfolio_id": "2f69612d-3b97-4820-babc-6c482a70fb68",
                     "period": { "from": "2026-09-07", "to": "2026-09-13" },
-                    "totals": { "funding": 42.5, "fees": 8.4, "spread": 12.1, "pnl": 46.2 },
+                    "totals": { "funding_pnl": 42.5, "fees_paid": 8.4, "spread_pnl": 12.1, "net_pnl": 46.2 },
                     "daily": [
-                      { "date": "2026-09-12", "funding": 20.5, "fees": 8.4, "spread": 7.1, "pnl": 19.2 },
-                      { "date": "2026-09-13", "funding": 22, "fees": 0, "spread": 5, "pnl": 27 }
+                      { "date": "2026-09-12", "funding_pnl": 20.5, "fees_paid": 8.4, "spread_pnl": 7.1, "net_pnl": 19.2 },
+                      { "date": "2026-09-13", "funding_pnl": 22, "fees_paid": 0, "spread_pnl": 5, "net_pnl": 27 }
                     ]
                   }
                 }
@@ -838,6 +846,7 @@
     },
     "/v1/positions/{position_id}/performance": {
       "get": {
+        "tags": ["Portfolio"],
         "summary": "Position performance",
         "operationId": "getPositionPerformance",
         "security": [{ "BearerAuth": [] }],
@@ -888,7 +897,8 @@
       "BearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "bearerFormat": "API key"
+        "bearerFormat": "API key",
+        "description": "Personal API key created at bendbasis.com/account/api-keys."
       }
     },
     "responses": {
@@ -1211,7 +1221,7 @@
       "PositionLeg": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["leg_id", "side", "market_id", "exchange", "symbol", "leverage", "quantity", "open_price", "close_price", "open_fee_paid", "close_fee_paid", "funding_accrued_manual"],
+        "required": ["leg_id", "side", "market_id", "exchange", "symbol", "leverage", "opening_quantity", "quantity", "open_price", "close_price", "open_fee_paid", "close_fee_paid", "funding_pnl_override"],
         "properties": {
           "leg_id": { "type": "string", "format": "uuid" },
           "side": { "type": "string", "enum": ["long", "short"] },
@@ -1219,12 +1229,13 @@
           "exchange": { "type": "string" },
           "symbol": { "type": "string" },
           "leverage": { "type": ["number", "null"] },
-          "quantity": { "type": ["number", "null"] },
+          "opening_quantity": { "type": ["number", "null"], "description": "Quantity recorded when the position opened." },
+          "quantity": { "type": "number", "description": "Current quantity after size adjustments. Zero for a closed position." },
           "open_price": { "type": ["number", "null"] },
           "close_price": { "type": ["number", "null"] },
           "open_fee_paid": { "type": ["number", "null"] },
           "close_fee_paid": { "type": ["number", "null"] },
-          "funding_accrued_manual": { "type": ["number", "null"] }
+          "funding_pnl_override": { "type": ["number", "null"], "description": "User-provided lifetime funding PnL override for this leg." }
         }
       },
       "PortfolioPerformanceResponse": {
@@ -1256,24 +1267,24 @@
       "PerformanceValues": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["funding", "fees", "spread", "pnl"],
+        "required": ["funding_pnl", "fees_paid", "spread_pnl", "net_pnl"],
         "properties": {
-          "funding": { "type": "number" },
-          "fees": { "type": "number", "description": "Fees paid." },
-          "spread": { "type": "number" },
-          "pnl": { "type": "number" }
+          "funding_pnl": { "type": "number", "description": "Funding PnL in USD." },
+          "fees_paid": { "type": "number", "description": "Fees paid in USD." },
+          "spread_pnl": { "type": "number", "description": "Spread PnL in USD." },
+          "net_pnl": { "type": "number", "description": "Net PnL in USD." }
         }
       },
       "DailyPerformance": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["date", "funding", "fees", "spread", "pnl"],
+        "required": ["date", "funding_pnl", "fees_paid", "spread_pnl", "net_pnl"],
         "properties": {
           "date": { "type": "string", "format": "date" },
-          "funding": { "type": "number" },
-          "fees": { "type": "number", "description": "Fees paid." },
-          "spread": { "type": "number" },
-          "pnl": { "type": "number" }
+          "funding_pnl": { "type": "number", "description": "Funding PnL in USD." },
+          "fees_paid": { "type": "number", "description": "Fees paid in USD." },
+          "spread_pnl": { "type": "number", "description": "Spread PnL in USD." },
+          "net_pnl": { "type": "number", "description": "Net PnL in USD." }
         }
       },
       "PositionPerformanceResponse": {
@@ -1291,14 +1302,14 @@
           "position_id": { "type": "string", "format": "uuid" },
           "portfolio_id": { "type": "string", "format": "uuid" },
           "valuation": { "type": "string", "enum": ["mark_to_market", "realized"] },
-          "funding_pnl": { "type": "number" },
+          "funding_pnl": { "type": "number", "description": "Funding PnL in USD." },
           "fees": {
             "type": "object",
             "additionalProperties": false,
             "required": ["paid", "estimated_exit"],
             "properties": {
-              "paid": { "type": "number", "description": "Fees already paid." },
-              "estimated_exit": { "type": "number", "description": "Estimated fee for exiting the active quantity. Zero for a closed position." }
+              "paid": { "type": "number", "description": "Fees already paid in USD." },
+              "estimated_exit": { "type": "number", "description": "Estimated fee in USD for exiting the active quantity. Zero for a closed position." }
             }
           },
           "spread_pnl": {
@@ -1306,14 +1317,14 @@
             "additionalProperties": false,
             "required": ["realized", "unrealized"],
             "properties": {
-              "realized": { "type": "number" },
-              "unrealized": { "type": "number", "description": "Current mark-to-market spread. Zero for a closed position." }
+              "realized": { "type": "number", "description": "Realized spread PnL in USD." },
+              "unrealized": { "type": "number", "description": "Current mark-to-market spread PnL in USD. Zero for a closed position." }
             }
           },
-          "net_pnl": { "type": ["number", "null"] },
-          "duration_days": { "type": "number" },
-          "apr": { "type": ["number", "null"] },
-          "data_complete": { "type": "boolean" },
+          "net_pnl": { "type": ["number", "null"], "description": "Net PnL in USD after paid and estimated exit fees." },
+          "duration_days": { "type": "number", "description": "Position duration in days." },
+          "apr": { "type": ["number", "null"], "description": "Annualized return in percent." },
+          "data_complete": { "type": "boolean", "description": "Whether all inputs required for the calculation were available." },
           "calculated_at": { "type": "string", "format": "date-time" }
         }
       },
