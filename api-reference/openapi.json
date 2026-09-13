@@ -620,12 +620,297 @@
           "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
+    },
+    "/v1/portfolios": {
+      "get": {
+        "summary": "List portfolios",
+        "operationId": "listPortfolios",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Portfolio collection",
+            "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PortfolioCollection" },
+                "example": {
+                  "data": [
+                    {
+                      "portfolio_id": "2f69612d-3b97-4820-babc-6c482a70fb68",
+                      "name": "Main",
+                      "position_counts": { "open": 4, "closed": 12 }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/v1/portfolios/{portfolio_id}/positions": {
+      "get": {
+        "summary": "List positions",
+        "operationId": "listPortfolioPositions",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "portfolio_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "statuses",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": { "type": "string", "enum": ["open", "closed"] },
+              "uniqueItems": true
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "minimum": 1, "maximum": 500, "default": 100 }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Position collection",
+            "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PositionCollection" },
+                "example": {
+                  "data": [
+                    {
+                      "position_id": "de3e7930-4762-4b6d-80f0-13aa8a66ecfa",
+                      "asset": "BTC",
+                      "status": "open",
+                      "opened_at": "2026-09-01T08:00:00.000Z",
+                      "closed_at": null,
+                      "legs": [
+                        { "side": "long", "market_id": 15036, "exchange": "binance", "symbol": "BTCUSDT" },
+                        { "side": "short", "market_id": 125, "exchange": "bybit", "symbol": "BTCUSDT" }
+                      ]
+                    }
+                  ],
+                  "next_cursor": null
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/ResourceNotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/v1/positions/{position_id}": {
+      "get": {
+        "summary": "Get position",
+        "operationId": "getPosition",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "position_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Position",
+            "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PositionResponse" },
+                "example": {
+                  "data": {
+                    "position_id": "de3e7930-4762-4b6d-80f0-13aa8a66ecfa",
+                    "portfolio_id": "2f69612d-3b97-4820-babc-6c482a70fb68",
+                    "asset": "BTC",
+                    "status": "open",
+                    "note": null,
+                    "opened_at": "2026-09-01T08:00:00.000Z",
+                    "closed_at": null,
+                    "legs": [
+                      {
+                        "leg_id": "43bed8b5-8764-456d-9fd6-c7df9c960a76",
+                        "side": "long",
+                        "market_id": 15036,
+                        "exchange": "binance",
+                        "symbol": "BTCUSDT",
+                        "leverage": 2,
+                        "quantity": 0.1,
+                        "open_price": 108000,
+                        "close_price": null,
+                        "open_fee_paid": 4.32,
+                        "close_fee_paid": null,
+                        "funding_accrued_manual": null
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/ResourceNotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/v1/portfolios/{portfolio_id}/performance": {
+      "get": {
+        "summary": "Portfolio performance",
+        "operationId": "getPortfolioPerformance",
+        "description": "Returns daily values for an inclusive UTC date range. Defaults to the latest 7 days and supports up to 366 days.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "portfolio_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Portfolio performance",
+            "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PortfolioPerformanceResponse" },
+                "example": {
+                  "data": {
+                    "portfolio_id": "2f69612d-3b97-4820-babc-6c482a70fb68",
+                    "period": { "from": "2026-09-07", "to": "2026-09-13" },
+                    "totals": { "funding": 42.5, "fees": 8.4, "spread": 12.1, "pnl": 46.2 },
+                    "daily": [
+                      { "date": "2026-09-12", "funding": 20.5, "fees": 8.4, "spread": 7.1, "pnl": 19.2 },
+                      { "date": "2026-09-13", "funding": 22, "fees": 0, "spread": 5, "pnl": 27 }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/ResourceNotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/v1/positions/{position_id}/performance": {
+      "get": {
+        "summary": "Position performance",
+        "operationId": "getPositionPerformance",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "position_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Position performance",
+            "headers": { "X-API-Version": { "schema": { "type": "string" }, "example": "v1" } },
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PositionPerformanceResponse" },
+                "example": {
+                  "data": {
+                    "position_id": "de3e7930-4762-4b6d-80f0-13aa8a66ecfa",
+                    "portfolio_id": "2f69612d-3b97-4820-babc-6c482a70fb68",
+                    "valuation": "mark_to_market",
+                    "funding_pnl": 42.5,
+                    "fees": { "paid": 8.4, "estimated_exit": 8.4 },
+                    "spread_pnl": { "realized": 0, "unrealized": 12.1 },
+                    "net_pnl": 37.8,
+                    "duration_days": 12,
+                    "apr": 21.29,
+                    "data_complete": true,
+                    "calculated_at": "2026-09-13T12:00:00.000Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidationFailed" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/ResourceNotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
     }
   },
   "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API key"
+      }
+    },
     "responses": {
       "RateLimited": {
         "description": "Rate limit exceeded."
+      },
+      "ValidationFailed": {
+        "description": "Invalid request.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ValidationError" } } }
+      },
+      "Unauthorized": {
+        "description": "Missing or invalid API key.",
+        "headers": { "WWW-Authenticate": { "schema": { "type": "string" }, "example": "Bearer" } },
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UnauthorizedError" } } }
+      },
+      "Forbidden": {
+        "description": "The API key does not grant the required scope.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ForbiddenError" } } }
+      },
+      "ResourceNotFound": {
+        "description": "Resource not found.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/NotFoundError" } } }
       }
     },
     "schemas": {
@@ -838,6 +1123,217 @@
           "net_pnl": { "type": "number", "description": "PnL after execution cost in USD." },
           "cumulative_net_pnl": { "type": "number", "description": "Cumulative net PnL in USD." }
         }
+      },
+      "PortfolioCollection": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/Portfolio" } }
+        }
+      },
+      "Portfolio": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["portfolio_id", "name", "position_counts"],
+        "properties": {
+          "portfolio_id": { "type": "string", "format": "uuid" },
+          "name": { "type": ["string", "null"] },
+          "position_counts": { "$ref": "#/components/schemas/PositionCounts" }
+        }
+      },
+      "PositionCounts": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["open", "closed"],
+        "properties": {
+          "open": { "type": "integer", "minimum": 0 },
+          "closed": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "PositionCollection": {
+        "type": "object",
+        "required": ["data", "next_cursor"],
+        "properties": {
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/PositionSummary" } },
+          "next_cursor": { "type": ["string", "null"], "description": "Cursor for the next page." }
+        }
+      },
+      "PositionSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["position_id", "asset", "status", "opened_at", "closed_at", "legs"],
+        "properties": {
+          "position_id": { "type": "string", "format": "uuid" },
+          "asset": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/PositionStatus" },
+          "opened_at": { "type": "string", "format": "date-time" },
+          "closed_at": { "type": ["string", "null"], "format": "date-time" },
+          "legs": { "type": "array", "items": { "$ref": "#/components/schemas/PositionLegSummary" } }
+        }
+      },
+      "PositionResponse": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": { "$ref": "#/components/schemas/Position" }
+        }
+      },
+      "Position": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["position_id", "portfolio_id", "asset", "status", "note", "opened_at", "closed_at", "legs"],
+        "properties": {
+          "position_id": { "type": "string", "format": "uuid" },
+          "portfolio_id": { "type": "string", "format": "uuid" },
+          "asset": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/PositionStatus" },
+          "note": { "type": ["string", "null"] },
+          "opened_at": { "type": "string", "format": "date-time" },
+          "closed_at": { "type": ["string", "null"], "format": "date-time" },
+          "legs": { "type": "array", "items": { "$ref": "#/components/schemas/PositionLeg" } }
+        }
+      },
+      "PositionStatus": {
+        "type": "string",
+        "enum": ["open", "closed"]
+      },
+      "PositionLegSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["side", "market_id", "exchange", "symbol"],
+        "properties": {
+          "side": { "type": "string", "enum": ["long", "short"] },
+          "market_id": { "type": ["integer", "null"] },
+          "exchange": { "type": "string" },
+          "symbol": { "type": "string" }
+        }
+      },
+      "PositionLeg": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["leg_id", "side", "market_id", "exchange", "symbol", "leverage", "quantity", "open_price", "close_price", "open_fee_paid", "close_fee_paid", "funding_accrued_manual"],
+        "properties": {
+          "leg_id": { "type": "string", "format": "uuid" },
+          "side": { "type": "string", "enum": ["long", "short"] },
+          "market_id": { "type": ["integer", "null"] },
+          "exchange": { "type": "string" },
+          "symbol": { "type": "string" },
+          "leverage": { "type": ["number", "null"] },
+          "quantity": { "type": ["number", "null"] },
+          "open_price": { "type": ["number", "null"] },
+          "close_price": { "type": ["number", "null"] },
+          "open_fee_paid": { "type": ["number", "null"] },
+          "close_fee_paid": { "type": ["number", "null"] },
+          "funding_accrued_manual": { "type": ["number", "null"] }
+        }
+      },
+      "PortfolioPerformanceResponse": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["portfolio_id", "period", "totals", "daily"],
+            "properties": {
+              "portfolio_id": { "type": "string", "format": "uuid" },
+              "period": { "$ref": "#/components/schemas/DatePeriod" },
+              "totals": { "$ref": "#/components/schemas/PerformanceValues" },
+              "daily": { "type": "array", "items": { "$ref": "#/components/schemas/DailyPerformance" } }
+            }
+          }
+        }
+      },
+      "DatePeriod": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "to"],
+        "properties": {
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" }
+        }
+      },
+      "PerformanceValues": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["funding", "fees", "spread", "pnl"],
+        "properties": {
+          "funding": { "type": "number" },
+          "fees": { "type": "number", "description": "Fees paid." },
+          "spread": { "type": "number" },
+          "pnl": { "type": "number" }
+        }
+      },
+      "DailyPerformance": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date", "funding", "fees", "spread", "pnl"],
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "funding": { "type": "number" },
+          "fees": { "type": "number", "description": "Fees paid." },
+          "spread": { "type": "number" },
+          "pnl": { "type": "number" }
+        }
+      },
+      "PositionPerformanceResponse": {
+        "type": "object",
+        "required": ["data"],
+        "properties": {
+          "data": { "$ref": "#/components/schemas/PositionPerformance" }
+        }
+      },
+      "PositionPerformance": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["position_id", "portfolio_id", "valuation", "funding_pnl", "fees", "spread_pnl", "net_pnl", "duration_days", "apr", "data_complete", "calculated_at"],
+        "properties": {
+          "position_id": { "type": "string", "format": "uuid" },
+          "portfolio_id": { "type": "string", "format": "uuid" },
+          "valuation": { "type": "string", "enum": ["mark_to_market", "realized"] },
+          "funding_pnl": { "type": "number" },
+          "fees": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["paid", "estimated_exit"],
+            "properties": {
+              "paid": { "type": "number", "description": "Fees already paid." },
+              "estimated_exit": { "type": "number", "description": "Estimated fee for exiting the active quantity. Zero for a closed position." }
+            }
+          },
+          "spread_pnl": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["realized", "unrealized"],
+            "properties": {
+              "realized": { "type": "number" },
+              "unrealized": { "type": "number", "description": "Current mark-to-market spread. Zero for a closed position." }
+            }
+          },
+          "net_pnl": { "type": ["number", "null"] },
+          "duration_days": { "type": "number" },
+          "apr": { "type": ["number", "null"] },
+          "data_complete": { "type": "boolean" },
+          "calculated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "UnauthorizedError": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string", "enum": ["UNAUTHORIZED"] },
+          "message": { "type": "string" }
+        },
+        "example": { "code": "UNAUTHORIZED", "message": "Valid API key required" }
+      },
+      "ForbiddenError": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string", "enum": ["FORBIDDEN"] },
+          "message": { "type": "string" }
+        },
+        "example": { "code": "FORBIDDEN", "message": "API key does not grant the required scope" }
       },
       "ValidationError": {
         "type": "object",

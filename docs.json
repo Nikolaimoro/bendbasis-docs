@@ -47,6 +47,16 @@
               "api-reference/funding/arbitrage",
               "api-reference/funding/backtest"
             ]
+          },
+          {
+            "group": "Portfolio",
+            "pages": [
+              "api-reference/portfolio/portfolios",
+              "api-reference/portfolio/positions",
+              "api-reference/portfolio/position",
+              "api-reference/portfolio/portfolio-performance",
+              "api-reference/portfolio/position-performance"
+            ]
           }
         ]
       }

@@ -1,0 +1,12 @@
+---
+title: "Portfolio performance"
+description: "Get daily portfolio performance"
+openapi: "GET /v1/portfolios/{portfolio_id}/performance"
+---
+
+`from` and `to` are inclusive UTC dates. The default range is the latest 7 days.
+
+```bash
+curl "https://api.bendbasis.com/v1/portfolios/PORTFOLIO_ID/performance?from=2026-09-01&to=2026-09-13" \
+  -H "Authorization: Bearer $BENDBASIS_API_KEY"
+```

@@ -1,0 +1,12 @@
+---
+title: "Position performance"
+description: "Get lifetime position performance"
+openapi: "GET /v1/positions/{position_id}/performance"
+---
+
+Open positions use current mark-to-market spread and an estimated exit fee. Closed positions contain realized values.
+
+```bash
+curl "https://api.bendbasis.com/v1/positions/POSITION_ID/performance" \
+  -H "Authorization: Bearer $BENDBASIS_API_KEY"
+```

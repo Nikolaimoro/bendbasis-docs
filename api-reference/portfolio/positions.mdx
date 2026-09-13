@@ -1,0 +1,12 @@
+---
+title: "Positions"
+description: "List positions in a portfolio"
+openapi: "GET /v1/portfolios/{portfolio_id}/positions"
+---
+
+Use `statuses` to include only `open` or `closed` positions. Deleted positions are not available. Pass `next_cursor` as `cursor` to retrieve the next page.
+
+```bash
+curl "https://api.bendbasis.com/v1/portfolios/PORTFOLIO_ID/positions?statuses=open,closed" \
+  -H "Authorization: Bearer $BENDBASIS_API_KEY"
+```

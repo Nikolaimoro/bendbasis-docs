@@ -15,7 +15,13 @@ The bendbasis API reference is updated regularly as datasets, endpoints, and res
 
 ## Authentication
 
-Authentication is not currently required.
+Market and funding endpoints do not require authentication.
+
+Portfolio endpoints require a personal API key. Create one in [API keys](https://bendbasis.com/account/api-keys) and send it as a bearer token:
+
+```http
+Authorization: Bearer bb_api_...
+```
 
 ## Example
 
