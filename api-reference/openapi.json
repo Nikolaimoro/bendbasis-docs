@@ -1237,7 +1237,7 @@
           "exchange": { "type": "string" },
           "symbol": { "type": "string" },
           "leverage": { "type": ["number", "null"] },
-          "quantity": { "type": "number", "description": "Current quantity after size adjustments. Zero for a closed position." },
+          "quantity": { "type": "number", "description": "Current quantity after size adjustments." },
           "open_price": { "type": ["number", "null"] },
           "mark_price": { "type": ["number", "null"], "description": "Latest available mark price for an open position." },
           "mark_price_updated_at": { "type": ["string", "null"], "format": "date-time", "description": "Time the mark price was last updated." }
@@ -1254,13 +1254,13 @@
           "exchange": { "type": "string" },
           "symbol": { "type": "string" },
           "leverage": { "type": ["number", "null"] },
-          "quantity": { "type": "number", "description": "Current quantity after size adjustments. Zero for a closed position." },
+          "quantity": { "type": "number", "description": "Current quantity after size adjustments." },
           "open_price": { "type": ["number", "null"] },
           "mark_price": { "type": ["number", "null"], "description": "Latest available mark price for an open position." },
           "mark_price_updated_at": { "type": ["string", "null"], "format": "date-time", "description": "Time the mark price was last updated." },
           "close_price": { "type": ["number", "null"] },
-          "open_fee_paid": { "type": ["number", "null"] },
-          "close_fee_paid": { "type": ["number", "null"] },
+          "open_fee_paid": { "type": ["number", "null"], "description": "Opening fee in USD." },
+          "close_fee_paid": { "type": ["number", "null"], "description": "Closing fee in USD." },
           "funding": { "$ref": "#/components/schemas/LegFunding" }
         }
       },
@@ -1344,7 +1344,7 @@
             "required": ["paid", "estimated_exit"],
             "properties": {
               "paid": { "type": "number", "description": "Fees already paid in USD." },
-              "estimated_exit": { "type": "number", "description": "Estimated fee in USD for exiting the active quantity. Zero for a closed position." }
+              "estimated_exit": { "type": "number", "description": "Estimated fee in USD for exiting the active quantity." }
             }
           },
           "spread_pnl": {
@@ -1353,19 +1353,18 @@
             "required": ["realized", "unrealized"],
             "properties": {
               "realized": { "type": "number", "description": "Realized spread PnL in USD." },
-              "unrealized": { "type": "number", "description": "Estimated spread PnL in USD for the active quantity. Zero for a closed position." }
+              "unrealized": { "type": "number", "description": "Estimated spread PnL in USD for the active quantity." }
             }
           },
-          "net_pnl": { "type": ["number", "null"], "description": "Funding plus realized and estimated spread PnL, minus paid and estimated exit fees, in USD." },
+          "net_pnl": { "type": ["number", "null"], "description": "Funding plus realized and estimated spread PnL, minus paid and estimated exit fees, in USD. Null when required inputs are unavailable." },
           "duration_days": { "type": "number", "description": "Position duration in days." },
           "apr": { "type": ["number", "null"], "description": "Annualized return in percent." },
-          "calculated_at": { "type": "string", "format": "date-time" }
+          "calculated_at": { "type": "string", "format": "date-time", "description": "Time the values were calculated." }
         }
       },
       "EmbeddedPositionPerformance": {
         "type": "object",
         "additionalProperties": false,
-        "description": "Included only when include=performance is requested.",
         "required": ["funding_pnl", "fees", "spread_pnl", "net_pnl", "duration_days", "apr", "calculated_at"],
         "properties": {
           "funding_pnl": { "type": "number", "description": "Funding PnL in USD." },
@@ -1375,7 +1374,7 @@
             "required": ["paid", "estimated_exit"],
             "properties": {
               "paid": { "type": "number", "description": "Fees already paid in USD." },
-              "estimated_exit": { "type": "number", "description": "Estimated fee in USD for exiting the active quantity. Zero for a closed position." }
+              "estimated_exit": { "type": "number", "description": "Estimated fee in USD for exiting the active quantity." }
             }
           },
           "spread_pnl": {
@@ -1384,13 +1383,13 @@
             "required": ["realized", "unrealized"],
             "properties": {
               "realized": { "type": "number", "description": "Realized spread PnL in USD." },
-              "unrealized": { "type": "number", "description": "Estimated spread PnL in USD for the active quantity. Zero for a closed position." }
+              "unrealized": { "type": "number", "description": "Estimated spread PnL in USD for the active quantity." }
             }
           },
-          "net_pnl": { "type": ["number", "null"], "description": "Funding plus realized and estimated spread PnL, minus paid and estimated exit fees, in USD." },
+          "net_pnl": { "type": ["number", "null"], "description": "Funding plus realized and estimated spread PnL, minus paid and estimated exit fees, in USD. Null when required inputs are unavailable." },
           "duration_days": { "type": "number", "description": "Position duration in days." },
           "apr": { "type": ["number", "null"], "description": "Annualized return in percent." },
-          "calculated_at": { "type": "string", "format": "date-time" }
+          "calculated_at": { "type": "string", "format": "date-time", "description": "Time the values were calculated." }
         }
       },
       "UnauthorizedError": {

@@ -1,0 +1,30 @@
+---
+title: "Quickstart"
+description: "Make your first API requests"
+---
+
+<Info>
+**API reference is actively maintained**
+
+The bendbasis API reference is updated regularly as datasets, endpoints, and response formats change. During active development, check the documentation for the endpoints you use for the latest information.
+</Info>
+
+## Base URL
+
+`https://api.bendbasis.com`
+
+## List markets
+
+Find BTC perpetual markets and their current funding data.
+
+```bash
+curl "https://api.bendbasis.com/v1/markets?base_assets=BTC&limit=10"
+```
+
+## Find arbitrage opportunities
+
+Compare cross-exchange BTC opportunities over a 15-day window.
+
+```bash
+curl "https://api.bendbasis.com/v1/funding/arbitrage?base_assets=BTC&window=15&limit=10"
+```
